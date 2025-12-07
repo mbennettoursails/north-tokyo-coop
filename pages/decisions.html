@@ -1,0 +1,228 @@
+<!-- Decisions Page (Reijikai Only) -->
+<div class="pb-24">
+    
+    <!-- Access Denied for Non-Reijikai -->
+    <template x-if="userRole !== 'reijikai'">
+        <div class="p-4 text-center">
+            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2" x-text="language === 'ja' ? 'アクセス制限' : 'Access Restricted'"></h2>
+            <p class="text-gray-600 mb-4" x-text="language === 'ja' ? 'この機能は委員会メンバー限定です' : 'This feature is for committee members only'"></p>
+            <button @click="navigate('dashboard')" class="btn btn-primary">
+                <span x-text="language === 'ja' ? 'ダッシュボードへ戻る' : 'Back to Dashboard'"></span>
+            </button>
+        </div>
+    </template>
+    
+    <!-- Main Content for Reijikai -->
+    <template x-if="userRole === 'reijikai'">
+        <div class="p-4">
+            <!-- Header -->
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2" x-text="t.decisions.title"></h2>
+                <p class="text-sm text-gray-600" x-text="language === 'ja' ? '提案を作成し、投票を管理します' : 'Create proposals and manage votes'"></p>
+            </div>
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-3 gap-3 mb-6">
+                <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+                    <p class="text-2xl font-bold text-purple-600">2</p>
+                    <p class="text-xs text-gray-500" x-text="language === 'ja' ? 'アクティブ' : 'Active'"></p>
+                </div>
+                <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+                    <p class="text-2xl font-bold text-gray-800">68%</p>
+                    <p class="text-xs text-gray-500" x-text="t.decisions.participationRate"></p>
+                </div>
+                <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+                    <p class="text-2xl font-bold text-gray-800">2.5<span class="text-sm font-normal" x-text="t.decisions.days"></span></p>
+                    <p class="text-xs text-gray-500" x-text="language === 'ja' ? '平均応答' : 'Avg Response'"></p>
+                </div>
+            </div>
+            
+            <!-- New Proposal Button -->
+            <button @click="showProposalForm = true" class="w-full btn btn-primary mb-6">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                <span x-text="t.decisions.newProposal"></span>
+            </button>
+            
+            <!-- Active Proposals -->
+            <h3 class="text-lg font-bold text-gray-800 mb-4" x-text="t.decisions.activeProposals"></h3>
+            
+            <div class="space-y-4">
+                <template x-for="proposal in getProposals()" :key="proposal.id">
+                    <div class="proposal-card">
+                        <!-- Header -->
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <span class="inline-block px-2 py-1 text-xs font-medium rounded-md" :class="getStatusBadgeClass(proposal.status)" x-text="proposal.displayStatus"></span>
+                                    <span class="inline-block px-2 py-1 text-xs font-medium rounded-md bg-gray-100 text-gray-700" x-text="proposal.displayCategory"></span>
+                                </div>
+                                <h4 class="font-bold text-gray-800 mb-1" x-text="proposal.displayTitle"></h4>
+                                <p class="text-sm text-gray-600 line-clamp-2" x-text="proposal.displayDescription"></p>
+                            </div>
+                        </div>
+                        
+                        <!-- Vote Progress -->
+                        <div class="mb-4">
+                            <div class="vote-bar mb-2">
+                                <div class="vote-bar-yes" :style="'width: ' + (proposal.totalVotes > 0 ? (proposal.votes.yes / proposal.totalVotes * 100) : 0) + '%'"></div>
+                                <div class="vote-bar-no" :style="'width: ' + (proposal.totalVotes > 0 ? (proposal.votes.no / proposal.totalVotes * 100) : 0) + '%'"></div>
+                                <div class="vote-bar-abstain" :style="'width: ' + (proposal.totalVotes > 0 ? (proposal.votes.abstain / proposal.totalVotes * 100) : 0) + '%'"></div>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-green-600 flex items-center">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                    <span x-text="proposal.votes.yes"></span>
+                                    <span class="ml-1" x-text="t.decisions.vote.yes"></span>
+                                </span>
+                                <span class="text-red-600 flex items-center">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                                    <span x-text="proposal.votes.no"></span>
+                                    <span class="ml-1" x-text="t.decisions.vote.no"></span>
+                                </span>
+                                <span class="text-gray-500 flex items-center">
+                                    <span class="w-3 h-3 mr-1">—</span>
+                                    <span x-text="proposal.votes.abstain"></span>
+                                    <span class="ml-1" x-text="t.decisions.vote.abstain"></span>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Meta Info -->
+                        <div class="flex items-center justify-between text-xs text-gray-500 mb-4">
+                            <span class="flex items-center">
+                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span x-text="t.decisions.deadline"></span>: <span x-text="formatDate(proposal.deadline)"></span>
+                            </span>
+                            <span class="flex items-center">
+                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                                <span x-text="proposal.totalVotes"></span>/<span x-text="proposal.totalEligible"></span> (<span x-text="proposal.participationRate"></span>%)
+                            </span>
+                        </div>
+                        
+                        <!-- Vote Button -->
+                        <template x-if="proposal.status === 'active'">
+                            <div class="grid grid-cols-3 gap-2">
+                                <button @click="castVote('yes')" class="btn btn-sm bg-green-100 text-green-700 hover:bg-green-200">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                    <span x-text="t.decisions.vote.yes"></span>
+                                </button>
+                                <button @click="castVote('no')" class="btn btn-sm bg-red-100 text-red-700 hover:bg-red-200">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                                    <span x-text="t.decisions.vote.no"></span>
+                                </button>
+                                <button @click="castVote('abstain')" class="btn btn-sm bg-gray-100 text-gray-700 hover:bg-gray-200">
+                                    <span>—</span>
+                                    <span class="ml-1" x-text="t.decisions.vote.abstain"></span>
+                                </button>
+                            </div>
+                        </template>
+                        
+                        <template x-if="proposal.status !== 'active'">
+                            <div class="text-center py-2 bg-gray-50 rounded-lg text-sm text-gray-500">
+                                <span x-text="language === 'ja' ? '投票は終了しました' : 'Voting has ended'"></span>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="mt-8">
+                <h3 class="text-lg font-bold text-gray-800 mb-4" x-text="t.decisions.recentActivity"></h3>
+                <div class="bg-white rounded-xl p-4 shadow-sm space-y-3">
+                    <div class="flex items-center text-sm">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                            <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-700">15 <span x-text="t.decisions.newVotes"></span></p>
+                            <p class="text-xs text-gray-500">2時間前</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-sm">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-700">3 <span x-text="t.decisions.commentsToday"></span></p>
+                            <p class="text-xs text-gray-500">5時間前</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-sm">
+                        <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-700">1 <span x-text="t.decisions.proposalClosed"></span></p>
+                            <p class="text-xs text-gray-500">昨日</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- Create Proposal Modal -->
+    <template x-if="showProposalForm">
+        <div class="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center" @click.self="showProposalForm = false">
+            <div class="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg max-h-[90vh] overflow-y-auto animate-slide-up">
+                <div class="p-4 border-b sticky top-0 bg-white">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-lg" x-text="t.decisions.createProposal"></h3>
+                        <button @click="showProposalForm = false" class="p-2 hover:bg-gray-100 rounded-full">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-4 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" x-text="t.decisions.proposalTitle"></label>
+                        <input type="text" class="input w-full" :placeholder="t.decisions.proposalTitlePlaceholder">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" x-text="t.decisions.proposalDescription"></label>
+                        <textarea class="input w-full h-32 resize-none" :placeholder="t.decisions.proposalDescPlaceholder"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" x-text="t.common.category"></label>
+                        <select class="input w-full">
+                            <option x-text="t.decisions.categories.policy"></option>
+                            <option x-text="t.decisions.categories.budget"></option>
+                            <option x-text="t.decisions.categories.event"></option>
+                            <option x-text="t.decisions.categories.other"></option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" x-text="t.decisions.votingDeadline"></label>
+                        <input type="date" class="input w-full">
+                    </div>
+                    
+                    <button @click="showProposalForm = false; alert(t.messages.saveSuccess)" class="w-full btn btn-primary">
+                        <span x-text="t.decisions.publishProposal"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>

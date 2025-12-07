@@ -1,0 +1,446 @@
+<!-- Admin Content Management Page (Shokuin Only) -->
+<div class="pb-24">
+    
+    <!-- Access Denied for Non-Shokuin -->
+    <template x-if="userRole !== 'shokuin' && userRole !== 'reijikai'">
+        <div class="p-4 text-center">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2" x-text="language === 'ja' ? 'アクセス制限' : 'Access Restricted'"></h2>
+            <p class="text-gray-600 mb-4" x-text="language === 'ja' ? 'この機能は職員限定です' : 'This feature is for staff members only'"></p>
+            <button @click="navigate('dashboard')" class="btn btn-primary">
+                <span x-text="language === 'ja' ? 'ダッシュボードへ戻る' : 'Back to Dashboard'"></span>
+            </button>
+        </div>
+    </template>
+    
+    <!-- Main Content for Shokuin/Reijikai -->
+    <template x-if="userRole === 'shokuin' || userRole === 'reijikai'">
+        <div class="p-4">
+            <!-- Header -->
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2" x-text="t.admin.title"></h2>
+                <p class="text-sm text-gray-600" x-text="language === 'ja' ? 'ニュース、イベント、知識倉庫を管理します' : 'Manage news, events, and knowledge base'"></p>
+            </div>
+            
+            <!-- Content Type Tabs -->
+            <div class="flex space-x-1 bg-gray-100 rounded-lg p-1 mb-6">
+                <button 
+                    @click="adminTab = 'news'"
+                    :class="adminTab === 'news' ? 'bg-white shadow text-coop-600' : 'text-gray-600'"
+                    class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all" 
+                    x-text="t.admin.tabs.news">
+                </button>
+                <button 
+                    @click="adminTab = 'events'"
+                    :class="adminTab === 'events' ? 'bg-white shadow text-coop-600' : 'text-gray-600'"
+                    class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all" 
+                    x-text="t.admin.tabs.events">
+                </button>
+                <button 
+                    @click="adminTab = 'knowledge'"
+                    :class="adminTab === 'knowledge' ? 'bg-white shadow text-coop-600' : 'text-gray-600'"
+                    class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all" 
+                    x-text="t.admin.tabs.knowledge">
+                </button>
+            </div>
+            
+            <!-- Stats Row -->
+            <div class="grid grid-cols-3 gap-3 mb-6">
+                <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+                    <p class="text-2xl font-bold text-blue-600" x-text="adminTab === 'news' ? '24' : adminTab === 'events' ? '8' : '25'"></p>
+                    <p class="text-xs text-gray-500" x-text="language === 'ja' ? '合計' : 'Total'"></p>
+                </div>
+                <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+                    <p class="text-2xl font-bold text-green-600" x-text="adminTab === 'news' ? '8' : adminTab === 'events' ? '3' : '6'"></p>
+                    <p class="text-xs text-gray-500" x-text="language === 'ja' ? '今月' : 'This Month'"></p>
+                </div>
+                <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+                    <p class="text-2xl font-bold text-gray-800" x-text="adminTab === 'news' ? '287' : adminTab === 'events' ? '156' : '412'"></p>
+                    <p class="text-xs text-gray-500" x-text="language === 'ja' ? '平均閲覧数' : 'Avg Views'"></p>
+                </div>
+            </div>
+            
+            <!-- News Management Tab -->
+            <template x-if="adminTab === 'news'">
+                <div class="animate-fade-in">
+                    <!-- Create Button -->
+                    <button @click="showNewsForm = true" class="w-full btn btn-primary mb-6">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span x-text="t.admin.newPost"></span>
+                    </button>
+                    
+                    <!-- News List -->
+                    <div class="space-y-3">
+                        <template x-for="article in getNewsArticles()" :key="article.id">
+                            <div class="admin-item-card">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <span class="px-2 py-1 text-xs font-medium rounded-md bg-coop-100 text-coop-700" x-text="article.displayCategory"></span>
+                                            <template x-if="article.pinned">
+                                                <span class="px-2 py-1 text-xs font-medium rounded-md bg-red-100 text-red-700">📌</span>
+                                            </template>
+                                        </div>
+                                        <h4 class="font-semibold text-gray-800 mb-1" x-text="article.displayTitle"></h4>
+                                        <p class="text-sm text-gray-500 line-clamp-1" x-text="article.displayExcerpt"></p>
+                                        <div class="flex items-center mt-2 text-xs text-gray-400">
+                                            <span x-text="formatShortDate(article.date)"></span>
+                                            <span class="mx-2">•</span>
+                                            <span class="flex items-center">
+                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                </svg>
+                                                <span x-text="article.views"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="flex space-x-1 ml-3">
+                                        <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Edit">
+                                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="p-2 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                                            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+            
+            <!-- Events Management Tab -->
+            <template x-if="adminTab === 'events'">
+                <div class="animate-fade-in">
+                    <!-- Create Button -->
+                    <button @click="showEventForm = true" class="w-full btn btn-primary mb-6">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span x-text="t.admin.newEvent"></span>
+                    </button>
+                    
+                    <!-- Events List -->
+                    <div class="space-y-3">
+                        <template x-for="event in getUpcomingEvents()" :key="event.id">
+                            <div class="admin-item-card">
+                                <div class="flex items-start">
+                                    <div class="event-date-badge mr-4 flex-shrink-0">
+                                        <span class="month" x-text="new Date(event.date).toLocaleDateString(language === 'ja' ? 'ja-JP' : 'en-US', { month: 'short' })"></span>
+                                        <span class="day" x-text="new Date(event.date).getDate()"></span>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center space-x-2 mb-1">
+                                            <span class="px-2 py-1 text-xs font-medium rounded-md bg-gray-100 text-gray-700" x-text="event.displayCategory"></span>
+                                            <template x-if="event.featured">
+                                                <span class="px-2 py-1 text-xs font-medium rounded-md bg-yellow-100 text-yellow-700">⭐</span>
+                                            </template>
+                                            <template x-if="event.roleRestricted">
+                                                <span class="px-2 py-1 text-xs font-medium rounded-md bg-purple-100 text-purple-700">🔒</span>
+                                            </template>
+                                        </div>
+                                        <h4 class="font-semibold text-gray-800 mb-1" x-text="event.displayTitle"></h4>
+                                        <p class="text-sm text-gray-500" x-text="event.displayLocation"></p>
+                                        <div class="flex items-center mt-2 text-xs text-gray-400">
+                                            <span x-text="event.time"></span>
+                                            <span class="mx-2">•</span>
+                                            <span :class="event.isFull ? 'text-red-500' : 'text-green-500'" x-text="event.registered + '/' + event.capacity"></span>
+                                        </div>
+                                    </div>
+                                    <div class="flex space-x-1 ml-3">
+                                        <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Edit">
+                                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="p-2 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                                            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+            
+            <!-- Knowledge Management Tab -->
+            <template x-if="adminTab === 'knowledge'">
+                <div class="animate-fade-in">
+                    <!-- Create Button -->
+                    <button @click="showKnowledgeForm = true" class="w-full btn btn-primary mb-6">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span x-text="t.admin.newArticle"></span>
+                    </button>
+                    
+                    <!-- Knowledge List -->
+                    <div class="space-y-3">
+                        <template x-for="article in getKnowledgeArticles()" :key="article.id">
+                            <div class="admin-item-card">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <span class="text-xl" x-text="article.categoryInfo?.icon"></span>
+                                            <span class="px-2 py-1 text-xs font-medium rounded-md bg-gray-100 text-gray-700" x-text="language === 'en' ? article.categoryInfo?.nameEn : article.categoryInfo?.name"></span>
+                                        </div>
+                                        <h4 class="font-semibold text-gray-800 mb-1" x-text="article.displayTitle"></h4>
+                                        <p class="text-sm text-gray-500 line-clamp-1" x-text="article.displayContent.substring(0, 80) + '...'"></p>
+                                        <div class="flex items-center mt-2 text-xs text-gray-400">
+                                            <span class="flex items-center">
+                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                </svg>
+                                                <span x-text="article.views"></span>
+                                            </span>
+                                            <span class="mx-2">•</span>
+                                            <span class="flex items-center text-green-500">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"></path>
+                                                </svg>
+                                                <span x-text="article.helpful"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="flex space-x-1 ml-3">
+                                        <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Edit">
+                                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="p-2 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                                            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+            
+            <!-- Quick Actions -->
+            <div class="mt-8">
+                <h3 class="text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide" x-text="t.admin.quickActions"></h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <button class="bg-white rounded-xl p-4 shadow-sm text-left hover:shadow-md transition-shadow">
+                        <svg class="w-6 h-6 text-blue-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-sm font-medium text-gray-800" x-text="t.admin.scheduledPosts"></p>
+                        <p class="text-xs text-gray-500">3 <span x-text="language === 'ja' ? '件予定' : 'scheduled'"></span></p>
+                    </button>
+                    <button class="bg-white rounded-xl p-4 shadow-sm text-left hover:shadow-md transition-shadow">
+                        <svg class="w-6 h-6 text-yellow-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                        <p class="text-sm font-medium text-gray-800" x-text="t.admin.draftPosts"></p>
+                        <p class="text-xs text-gray-500">5 <span x-text="language === 'ja' ? '件の下書き' : 'drafts'"></span></p>
+                    </button>
+                    <button class="bg-white rounded-xl p-4 shadow-sm text-left hover:shadow-md transition-shadow">
+                        <svg class="w-6 h-6 text-green-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        <p class="text-sm font-medium text-gray-800" x-text="t.admin.analytics"></p>
+                        <p class="text-xs text-gray-500" x-text="language === 'ja' ? '閲覧統計' : 'View stats'"></p>
+                    </button>
+                    <button class="bg-white rounded-xl p-4 shadow-sm text-left hover:shadow-md transition-shadow">
+                        <svg class="w-6 h-6 text-purple-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                        <p class="text-sm font-medium text-gray-800" x-text="language === 'ja' ? 'モデレーション' : 'Moderation'"></p>
+                        <p class="text-xs text-gray-500">2 <span x-text="language === 'ja' ? '件の報告' : 'reports'"></span></p>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- Create News Form Modal -->
+    <template x-if="showNewsForm">
+        <div class="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center" @click.self="showNewsForm = false">
+            <div class="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg max-h-[90vh] overflow-y-auto animate-slide-up">
+                <div class="p-4 border-b sticky top-0 bg-white">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-lg" x-text="t.admin.createNews"></h3>
+                        <button @click="showNewsForm = false" class="p-2 hover:bg-gray-100 rounded-full">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-4 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" x-text="language === 'ja' ? 'タイトル' : 'Title'"></label>
+                        <input type="text" class="input w-full" :placeholder="language === 'ja' ? 'ニュースのタイトル...' : 'News title...'">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" x-text="t.common.category"></label>
+                        <select class="input w-full">
+                            <option x-text="t.news.categories.announcement"></option>
+                            <option x-text="t.news.categories.product"></option>
+                            <option x-text="t.news.categories.community"></option>
+                            <option x-text="t.news.categories.recipe"></option>
+                            <option x-text="t.news.categories.event"></option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" x-text="language === 'ja' ? '内容' : 'Content'"></label>
+                        <textarea class="input w-full h-40 resize-none" :placeholder="language === 'ja' ? 'ニュースの内容を入力...' : 'Enter news content...'"></textarea>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" id="pin-news" class="w-5 h-5 text-coop-600 rounded mr-3">
+                        <label for="pin-news" class="text-sm text-gray-700" x-text="language === 'ja' ? 'トップに固定する' : 'Pin to top'"></label>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button @click="showNewsForm = false; alert(t.messages.saveSuccess)" class="flex-1 btn btn-primary">
+                            <span x-text="t.admin.publish"></span>
+                        </button>
+                        <button class="btn btn-outline">
+                            <span x-text="t.admin.saveDraft"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- Create Event Form Modal -->
+    <template x-if="showEventForm">
+        <div class="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center" @click.self="showEventForm = false">
+            <div class="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg max-h-[90vh] overflow-y-auto animate-slide-up">
+                <div class="p-4 border-b sticky top-0 bg-white">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-lg" x-text="t.admin.createEvent"></h3>
+                        <button @click="showEventForm = false" class="p-2 hover:bg-gray-100 rounded-full">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-4 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" x-text="language === 'ja' ? 'イベント名' : 'Event Name'"></label>
+                        <input type="text" class="input w-full" :placeholder="language === 'ja' ? 'イベントの名前...' : 'Event name...'">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" x-text="language === 'ja' ? '説明' : 'Description'"></label>
+                        <textarea class="input w-full h-24 resize-none" :placeholder="language === 'ja' ? 'イベントの説明...' : 'Event description...'"></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" x-text="t.common.date"></label>
+                            <input type="date" class="input w-full">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" x-text="t.common.time"></label>
+                            <input type="time" class="input w-full">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" x-text="t.events.location"></label>
+                        <input type="text" class="input w-full" :placeholder="language === 'ja' ? '場所...' : 'Location...'">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" x-text="t.events.capacity"></label>
+                            <input type="number" class="input w-full" placeholder="30">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" x-text="t.events.fee"></label>
+                            <input type="number" class="input w-full" placeholder="0">
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="w-5 h-5 text-coop-600 rounded mr-2">
+                            <span class="text-sm text-gray-700" x-text="language === 'ja' ? '注目イベント' : 'Featured'"></span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="w-5 h-5 text-coop-600 rounded mr-2">
+                            <span class="text-sm text-gray-700" x-text="language === 'ja' ? '委員会限定' : 'Committee only'"></span>
+                        </label>
+                    </div>
+                    
+                    <button @click="showEventForm = false; alert(t.messages.saveSuccess)" class="w-full btn btn-primary">
+                        <span x-text="t.admin.createEvent"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- Create Knowledge Article Form Modal -->
+    <template x-if="showKnowledgeForm">
+        <div class="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center" @click.self="showKnowledgeForm = false">
+            <div class="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg max-h-[90vh] overflow-y-auto animate-slide-up">
+                <div class="p-4 border-b sticky top-0 bg-white">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-lg" x-text="t.admin.createArticle"></h3>
+                        <button @click="showKnowledgeForm = false" class="p-2 hover:bg-gray-100 rounded-full">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-4 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" x-text="language === 'ja' ? 'タイトル' : 'Title'"></label>
+                        <input type="text" class="input w-full" :placeholder="language === 'ja' ? '記事のタイトル...' : 'Article title...'">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" x-text="t.common.category"></label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <template x-for="cat in CoopData.knowledgeCategories" :key="cat.id">
+                                <button class="py-2 px-2 rounded-lg text-xs font-medium bg-gray-100 text-gray-700 border-2 border-transparent hover:border-gray-300 flex flex-col items-center">
+                                    <span class="text-lg mb-1" x-text="cat.icon"></span>
+                                    <span x-text="language === 'en' ? cat.nameEn : cat.name" class="truncate w-full text-center"></span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" x-text="language === 'ja' ? '内容' : 'Content'"></label>
+                        <textarea class="input w-full h-48 resize-none" :placeholder="language === 'ja' ? '記事の内容を入力...' : 'Enter article content...'"></textarea>
+                    </div>
+                    
+                    <button @click="showKnowledgeForm = false; alert(t.messages.saveSuccess)" class="w-full btn btn-primary">
+                        <span x-text="t.admin.publish"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>

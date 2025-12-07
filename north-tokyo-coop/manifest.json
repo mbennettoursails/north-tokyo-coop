@@ -1,0 +1,83 @@
+{
+    "name": "北東京CO-OP Hub",
+    "short_name": "CO-OP Hub",
+    "description": "North Tokyo COOP Community Platform - コミュニティ・プライバシー・つながり",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#86bd5e",
+    "orientation": "portrait",
+    "scope": "/",
+    "lang": "ja",
+    "dir": "ltr",
+    "categories": ["social", "lifestyle", "utilities"],
+    "icons": [
+        {
+            "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='240' fill='%2386bd5e'/%3E%3Cg fill='none' stroke='white' stroke-width='24' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='256' cy='180' r='50'/%3E%3Cpath d='M170 350c0-47.5 38.5-86 86-86s86 38.5 86 86'/%3E%3Ccircle cx='130' cy='220' r='35'/%3E%3Cpath d='M70 320c0-33 27-60 60-60'/%3E%3Ccircle cx='382' cy='220' r='35'/%3E%3Cpath d='M442 320c0-33-27-60-60-60'/%3E%3C/g%3E%3C/svg%3E",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Ccircle cx='96' cy='96' r='90' fill='%2386bd5e'/%3E%3Cg fill='none' stroke='white' stroke-width='10' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='96' cy='68' r='22'/%3E%3Cpath d='M62 136c0-19 15-34 34-34s34 15 34 34'/%3E%3Ccircle cx='48' cy='82' r='14'/%3E%3Cpath d='M26 118c0-12 10-22 22-22'/%3E%3Ccircle cx='144' cy='82' r='14'/%3E%3Cpath d='M166 118c0-12-10-22-22-22'/%3E%3C/g%3E%3C/svg%3E",
+            "sizes": "192x192",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 844'%3E%3Crect fill='%23f9fafb' width='390' height='844'/%3E%3Crect fill='%2386bd5e' y='0' width='390' height='60'/%3E%3Ctext x='195' y='40' fill='white' text-anchor='middle' font-family='sans-serif' font-size='18' font-weight='bold'%3ECO-OP Hub%3C/text%3E%3C/svg%3E",
+            "sizes": "390x844",
+            "type": "image/svg+xml",
+            "form_factor": "narrow",
+            "label": "Mobile Dashboard"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "コミュニティ",
+            "short_name": "Community",
+            "description": "View community mutual aid board",
+            "url": "/?view=community",
+            "icons": [
+                {
+                    "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Ccircle cx='48' cy='48' r='44' fill='%2322c55e'/%3E%3Ctext x='48' y='60' text-anchor='middle' font-size='40'%3E🤝%3C/text%3E%3C/svg%3E",
+                    "sizes": "96x96",
+                    "type": "image/svg+xml"
+                }
+            ]
+        },
+        {
+            "name": "イベント",
+            "short_name": "Events",
+            "description": "Browse upcoming events",
+            "url": "/?view=events",
+            "icons": [
+                {
+                    "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Ccircle cx='48' cy='48' r='44' fill='%239333ea'/%3E%3Ctext x='48' y='60' text-anchor='middle' font-size='40'%3E📅%3C/text%3E%3C/svg%3E",
+                    "sizes": "96x96",
+                    "type": "image/svg+xml"
+                }
+            ]
+        },
+        {
+            "name": "ニュース",
+            "short_name": "News",
+            "description": "Read latest news",
+            "url": "/?view=news",
+            "icons": [
+                {
+                    "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Ccircle cx='48' cy='48' r='44' fill='%233b82f6'/%3E%3Ctext x='48' y='60' text-anchor='middle' font-size='40'%3E📰%3C/text%3E%3C/svg%3E",
+                    "sizes": "96x96",
+                    "type": "image/svg+xml"
+                }
+            ]
+        }
+    ],
+    "prefer_related_applications": false,
+    "display_override": ["standalone", "minimal-ui"],
+    "edge_side_panel": {
+        "preferred_width": 400
+    }
+}

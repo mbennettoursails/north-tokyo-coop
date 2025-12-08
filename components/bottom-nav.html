@@ -1,14 +1,13 @@
 <!--
-  Bottom Navigation Component
+  Bottom Navigation Component (Fixed Version)
   
   Usage: Include this component at the bottom of your page layout
-  Dependencies: Alpine.js, app.js (for navigation functions)
+  Dependencies: Alpine.js
   
-  Props (via Alpine.js state):
-  - currentView: Current active view name
-  - navigate(): Function to handle navigation
-  - t: Translation object
-  - showMoreMenu: Boolean to control More menu visibility
+  Key Fixes:
+  1. All styles are self-contained (no Tailwind utility class dependencies)
+  2. More menu properly overlays instead of extending page
+  3. Icons properly sized and colored
 -->
 
 <!-- Bottom Tab Navigation -->
@@ -21,7 +20,7 @@
         <svg class="bottom-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
         </svg>
-        <span class="bottom-nav-label" x-text="t.nav.home"></span>
+        <span class="bottom-nav-label" x-text="t.nav.home">Home</span>
     </button>
     
     <!-- News Tab -->
@@ -32,8 +31,7 @@
         <svg class="bottom-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
         </svg>
-        <span class="bottom-nav-label" x-text="t.nav.news"></span>
-        <!-- Notification Badge -->
+        <span class="bottom-nav-label" x-text="t.nav.news">News</span>
         <span class="notification-badge" x-show="unreadNews > 0" x-text="unreadNews"></span>
     </button>
     
@@ -45,8 +43,7 @@
         <svg class="bottom-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
         </svg>
-        <span class="bottom-nav-label" x-text="t.nav.community"></span>
-        <!-- Active Requests Badge -->
+        <span class="bottom-nav-label" x-text="t.nav.community">Community</span>
         <span class="notification-badge" x-show="activeRequests > 0" x-text="activeRequests"></span>
     </button>
     
@@ -58,7 +55,7 @@
         <svg class="bottom-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
         </svg>
-        <span class="bottom-nav-label" x-text="t.nav.events"></span>
+        <span class="bottom-nav-label" x-text="t.nav.events">Events</span>
     </button>
     
     <!-- More Tab -->
@@ -69,11 +66,11 @@
         <svg class="bottom-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
-        <span class="bottom-nav-label" x-text="t.nav.more"></span>
+        <span class="bottom-nav-label" x-text="t.nav.more">More</span>
     </button>
 </nav>
 
-<!-- More Menu (Slide-up Drawer) -->
+<!-- More Menu Overlay (Backdrop) -->
 <div 
     x-show="showMoreMenu" 
     x-transition:enter="transition ease-out duration-300"
@@ -82,10 +79,12 @@
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
-    class="fixed inset-0 z-40 bg-black/50"
-    @click="showMoreMenu = false">
+    class="more-menu-overlay"
+    @click="showMoreMenu = false"
+    style="display: none;">
 </div>
 
+<!-- More Menu (Slide-up Drawer) -->
 <div 
     x-show="showMoreMenu" 
     x-transition:enter="transition ease-out duration-300 transform"
@@ -95,51 +94,52 @@
     x-transition:leave-start="translate-y-0"
     x-transition:leave-end="translate-y-full"
     class="more-menu"
-    @click.away="showMoreMenu = false">
+    @click.away="showMoreMenu = false"
+    style="display: none;">
     
     <!-- Drag Handle -->
-    <div class="flex justify-center pt-2 pb-4">
-        <div class="w-10 h-1 bg-gray-300 rounded-full"></div>
+    <div class="more-menu-handle-container">
+        <div class="more-menu-handle"></div>
     </div>
     
     <!-- Menu Header -->
-    <div class="px-4 pb-4 border-b">
-        <div class="flex items-center">
-            <div class="w-12 h-12 bg-coop-100 rounded-full flex items-center justify-center mr-3">
-                <span class="text-2xl" x-text="user?.avatar || '👤'"></span>
+    <div class="more-menu-header">
+        <div class="more-menu-user">
+            <div class="more-menu-avatar">
+                <span x-text="user?.avatar || '👤'">👤</span>
             </div>
-            <div class="flex-1">
-                <p class="font-bold text-gray-800" x-text="getUserDisplayName()"></p>
-                <p class="text-xs text-gray-500" x-text="user?.id"></p>
+            <div class="more-menu-user-info">
+                <p class="more-menu-user-name" x-text="getUserDisplayName()">User Name</p>
+                <p class="more-menu-user-id" x-text="user?.id">ID</p>
             </div>
-            <span class="badge" :class="getRoleBadgeClass()" x-text="getRoleFullName()"></span>
+            <span class="role-badge" :class="'role-badge-' + userRole" x-text="getRoleFullName()">Role</span>
         </div>
     </div>
     
     <!-- Menu Items -->
-    <div class="py-2">
+    <div class="more-menu-items">
         <!-- Knowledge Base -->
         <button @click="navigate('knowledge'); showMoreMenu = false" class="more-menu-item">
-            <div class="more-menu-icon bg-yellow-100">
-                <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            <div class="more-menu-icon more-menu-icon-yellow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                 </svg>
             </div>
-            <span class="flex-1" x-text="t.nav.knowledge"></span>
-            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span class="more-menu-item-label" x-text="t.nav.knowledge">Knowledge</span>
+            <svg class="more-menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
             </svg>
         </button>
         
         <!-- Profile -->
         <button @click="navigate('profile'); showMoreMenu = false" class="more-menu-item">
-            <div class="more-menu-icon bg-green-100">
-                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            <div class="more-menu-icon more-menu-icon-green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                 </svg>
             </div>
-            <span class="flex-1" x-text="t.nav.profile"></span>
-            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span class="more-menu-item-label" x-text="t.nav.profile">Profile</span>
+            <svg class="more-menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
             </svg>
         </button>
@@ -149,86 +149,88 @@
             x-show="userRole === 'reijikai'" 
             @click="navigate('decisions'); showMoreMenu = false" 
             class="more-menu-item">
-            <div class="more-menu-icon bg-purple-100">
-                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+            <div class="more-menu-icon more-menu-icon-purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                 </svg>
             </div>
-            <span class="flex-1" x-text="t.nav.decisions"></span>
-            <span class="badge badge-purple text-xs mr-2">2</span>
-            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span class="more-menu-item-label" x-text="t.nav.decisions">Decisions</span>
+            <span class="more-menu-badge">2</span>
+            <svg class="more-menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
             </svg>
         </button>
         
-        <!-- Content Management (Shokuin Only) -->
+        <!-- Content Management (Shokuin & Reijikai) -->
         <button 
             x-show="userRole === 'shokuin' || userRole === 'reijikai'" 
             @click="navigate('admin'); showMoreMenu = false" 
             class="more-menu-item">
-            <div class="more-menu-icon bg-blue-100">
-                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            <div class="more-menu-icon more-menu-icon-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                 </svg>
             </div>
-            <span class="flex-1" x-text="t.nav.contentManagement"></span>
-            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span class="more-menu-item-label" x-text="t.nav.contentManagement">Content Management</span>
+            <svg class="more-menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
             </svg>
         </button>
         
         <!-- Divider -->
-        <div class="border-t my-2"></div>
+        <div class="more-menu-divider"></div>
         
         <!-- Shop (External Link) -->
         <a href="https://shop.seikatsuclub.coop" target="_blank" class="more-menu-item">
-            <div class="more-menu-icon bg-orange-100">
-                <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+            <div class="more-menu-icon more-menu-icon-orange">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                 </svg>
             </div>
-            <span class="flex-1" x-text="t.nav.shop"></span>
-            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span class="more-menu-item-label" x-text="t.nav.shop">Shop</span>
+            <svg class="more-menu-external" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
             </svg>
         </a>
         
         <!-- Settings -->
         <button class="more-menu-item">
-            <div class="more-menu-icon bg-gray-100">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            <div class="more-menu-icon more-menu-icon-gray">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 </svg>
             </div>
-            <span class="flex-1" x-text="t.nav.settings"></span>
-            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span class="more-menu-item-label" x-text="t.nav.settings">Settings</span>
+            <svg class="more-menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
             </svg>
         </button>
         
         <!-- Divider -->
-        <div class="border-t my-2"></div>
+        <div class="more-menu-divider"></div>
         
         <!-- Logout -->
-        <button @click="logout(); showMoreMenu = false" class="more-menu-item text-red-600">
-            <div class="more-menu-icon bg-red-100">
-                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+        <button @click="logout(); showMoreMenu = false" class="more-menu-item more-menu-item-danger">
+            <div class="more-menu-icon more-menu-icon-red">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                 </svg>
             </div>
-            <span class="flex-1" x-text="t.nav.logout"></span>
+            <span class="more-menu-item-label" x-text="t.nav.logout">Logout</span>
         </button>
     </div>
     
     <!-- App Version -->
-    <div class="px-4 py-3 border-t text-center">
-        <p class="text-xs text-gray-400">北東京CO-OP Hub v1.0.0</p>
+    <div class="more-menu-footer">
+        <p>北東京CO-OP Hub v1.0.0</p>
     </div>
 </div>
 
 <style>
-/* Bottom Navigation Styles */
+/* ==========================================
+   Bottom Navigation Styles
+   ========================================== */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -241,7 +243,7 @@
     background-color: white;
     border-top: 1px solid #e5e7eb;
     padding: 0.5rem 0;
-    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
     box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
@@ -303,7 +305,19 @@
     justify-content: center;
 }
 
-/* More Menu Styles */
+/* ==========================================
+   More Menu Overlay
+   ========================================== */
+.more-menu-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* ==========================================
+   More Menu Drawer
+   ========================================== */
 .more-menu {
     position: fixed;
     bottom: 0;
@@ -318,6 +332,90 @@
     box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15);
 }
 
+/* Drag Handle */
+.more-menu-handle-container {
+    display: flex;
+    justify-content: center;
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+}
+
+.more-menu-handle {
+    width: 2.5rem;
+    height: 0.25rem;
+    background-color: #d1d5db;
+    border-radius: 9999px;
+}
+
+/* Menu Header */
+.more-menu-header {
+    padding: 0 1rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.more-menu-user {
+    display: flex;
+    align-items: center;
+}
+
+.more-menu-avatar {
+    width: 3rem;
+    height: 3rem;
+    background-color: #dcfce7;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.75rem;
+    font-size: 1.5rem;
+}
+
+.more-menu-user-info {
+    flex: 1;
+}
+
+.more-menu-user-name {
+    font-weight: 700;
+    color: #1f2937;
+    font-size: 0.9375rem;
+}
+
+.more-menu-user-id {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+/* Role Badges */
+.role-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 9999px;
+}
+
+.role-badge-reijikai {
+    background-color: #f3e8ff;
+    color: #9333ea;
+}
+
+.role-badge-shokuin {
+    background-color: #dbeafe;
+    color: #3b82f6;
+}
+
+.role-badge-volunteer {
+    background-color: #dcfce7;
+    color: #22c55e;
+}
+
+/* Menu Items Container */
+.more-menu-items {
+    padding: 0.5rem 0;
+}
+
+/* Menu Item */
 .more-menu-item {
     display: flex;
     align-items: center;
@@ -340,6 +438,11 @@
     outline: none;
 }
 
+.more-menu-item-danger {
+    color: #dc2626;
+}
+
+/* Menu Icon Container */
 .more-menu-icon {
     width: 2.5rem;
     height: 2.5rem;
@@ -349,5 +452,147 @@
     justify-content: center;
     margin-right: 0.75rem;
     flex-shrink: 0;
+}
+
+.more-menu-icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* Icon Color Variants */
+.more-menu-icon-yellow {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.more-menu-icon-green {
+    background-color: #dcfce7;
+    color: #16a34a;
+}
+
+.more-menu-icon-purple {
+    background-color: #f3e8ff;
+    color: #9333ea;
+}
+
+.more-menu-icon-blue {
+    background-color: #dbeafe;
+    color: #3b82f6;
+}
+
+.more-menu-icon-orange {
+    background-color: #ffedd5;
+    color: #ea580c;
+}
+
+.more-menu-icon-gray {
+    background-color: #f3f4f6;
+    color: #6b7280;
+}
+
+.more-menu-icon-red {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+/* Menu Item Label */
+.more-menu-item-label {
+    flex: 1;
+}
+
+/* Chevron Icon */
+.more-menu-chevron {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #9ca3af;
+    stroke-width: 2;
+}
+
+/* External Link Icon */
+.more-menu-external {
+    width: 1rem;
+    height: 1rem;
+    color: #9ca3af;
+    stroke-width: 2;
+}
+
+/* Badge in Menu Item */
+.more-menu-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    background-color: #9333ea;
+    border-radius: 9999px;
+    margin-right: 0.5rem;
+}
+
+/* Divider */
+.more-menu-divider {
+    height: 1px;
+    background-color: #e5e7eb;
+    margin: 0.5rem 0;
+}
+
+/* Footer */
+.more-menu-footer {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+}
+
+.more-menu-footer p {
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+/* ==========================================
+   Alpine.js Transitions (fallback)
+   ========================================== */
+.translate-y-full {
+    transform: translateY(100%);
+}
+
+.translate-y-0 {
+    transform: translateY(0);
+}
+
+.opacity-0 {
+    opacity: 0;
+}
+
+.opacity-100 {
+    opacity: 1;
+}
+
+/* Transition classes */
+.transition {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ease-out {
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+
+.ease-in {
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+}
+
+.duration-300 {
+    transition-duration: 300ms;
+}
+
+.duration-200 {
+    transition-duration: 200ms;
+}
+
+.transform {
+    transform: translate(var(--tw-translate-x, 0), var(--tw-translate-y, 0)) rotate(var(--tw-rotate, 0)) skewX(var(--tw-skew-x, 0)) skewY(var(--tw-skew-y, 0)) scaleX(var(--tw-scale-x, 1)) scaleY(var(--tw-scale-y, 1));
 }
 </style>

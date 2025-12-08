@@ -125,6 +125,12 @@ document.addEventListener('alpine:init', () => {
             this.showQRScanner = false;
         },
         
+        selectRoleAndLogin(role) {
+            this.selectedRole = role;
+            this.showQRScanner = false;
+            this.login();
+        },
+        
         login() {
             if (!this.selectedRole) return;
             

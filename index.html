@@ -95,18 +95,29 @@
                     
                     <!-- Role Selection After "Scan" -->
                     <div x-show="!isScanning" class="mt-4 space-y-2">
-                        <button @click="selectRoleFromQR('reijikai')" class="w-full py-3 px-4 bg-purple-50 hover:bg-purple-100 rounded-lg text-left flex items-center transition-colors">
+                        <p class="text-sm text-gray-600 mb-3" x-text="t.login.selectRole"></p>
+                        <button @click="selectRoleAndLogin('reijikai')" class="w-full py-3 px-4 bg-purple-50 hover:bg-purple-100 rounded-lg text-left flex items-center transition-colors">
                             <span class="text-2xl mr-3">👔</span>
-                            <span class="font-medium text-purple-800" x-text="t.roles.reijikai.fullName"></span>
+                            <div class="flex-1">
+                                <span class="font-medium text-purple-800" x-text="t.roles.reijikai.fullName"></span>
+                                <p class="text-xs text-purple-600" x-text="t.roles.reijikai.desc"></p>
+                            </div>
                         </button>
-                        <button @click="selectRoleFromQR('shokuin')" class="w-full py-3 px-4 bg-blue-50 hover:bg-blue-100 rounded-lg text-left flex items-center transition-colors">
+                        <button @click="selectRoleAndLogin('shokuin')" class="w-full py-3 px-4 bg-blue-50 hover:bg-blue-100 rounded-lg text-left flex items-center transition-colors">
                             <span class="text-2xl mr-3">💼</span>
-                            <span class="font-medium text-blue-800" x-text="t.roles.shokuin.fullName"></span>
+                            <div class="flex-1">
+                                <span class="font-medium text-blue-800" x-text="t.roles.shokuin.fullName"></span>
+                                <p class="text-xs text-blue-600" x-text="t.roles.shokuin.desc"></p>
+                            </div>
                         </button>
-                        <button @click="selectRoleFromQR('volunteer')" class="w-full py-3 px-4 bg-green-50 hover:bg-green-100 rounded-lg text-left flex items-center transition-colors">
+                        <button @click="selectRoleAndLogin('volunteer')" class="w-full py-3 px-4 bg-green-50 hover:bg-green-100 rounded-lg text-left flex items-center transition-colors">
                             <span class="text-2xl mr-3">🤝</span>
-                            <span class="font-medium text-green-800" x-text="t.roles.volunteer.fullName"></span>
+                            <div class="flex-1">
+                                <span class="font-medium text-green-800" x-text="t.roles.volunteer.fullName"></span>
+                                <p class="text-xs text-green-600" x-text="t.roles.volunteer.desc"></p>
+                            </div>
                         </button>
+                        <button @click="showQRScanner = false" class="w-full mt-2 text-sm text-gray-500 hover:text-gray-700" x-text="t.common.cancel"></button>
                     </div>
                 </div>
             </div>
@@ -1259,11 +1270,11 @@
         
     </div>
 
-    <!-- Scripts -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Scripts - Order matters! Dependencies first, then Alpine -->
     <script src="js/data.js"></script>
     <script src="js/i18n.js"></script>
     <script src="js/app.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
     <!-- Register Service Worker -->
     <script>

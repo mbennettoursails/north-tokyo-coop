@@ -3,7 +3,7 @@
  * All sample data for POC demonstration
  */
 
-const appData = {
+const CoopData = {
   
   // ==========================================
   // USERS (All Three Personas)
@@ -179,6 +179,7 @@ const appData = {
       userAvatar: '🤝',
       area: 'itabashi',
       areaName: '板橋区',
+      areaEn: 'Itabashi',
       date: '2024-12-15',
       timeSlot: 'afternoon',
       urgency: 'normal',
@@ -204,6 +205,7 @@ const appData = {
       userAvatar: '👔',
       area: 'nerima',
       areaName: '練馬区',
+      areaEn: 'Nerima',
       date: null,
       timeSlot: 'morning',
       urgency: 'normal',
@@ -228,6 +230,7 @@ const appData = {
       userAvatar: '👵',
       area: 'toshima',
       areaName: '豊島区',
+      areaEn: 'Toshima',
       date: '2024-12-11',
       timeSlot: 'morning',
       urgency: 'urgent',
@@ -252,6 +255,7 @@ const appData = {
       userAvatar: '🌍',
       area: 'nerima',
       areaName: '練馬区',
+      areaEn: 'Nerima',
       date: null,
       timeSlot: 'evening',
       urgency: 'normal',
@@ -275,6 +279,7 @@ const appData = {
       userAvatar: '🤝',
       area: 'itabashi',
       areaName: '板橋区',
+      areaEn: 'Itabashi',
       date: null,
       timeSlot: 'morning',
       urgency: 'normal',
@@ -296,6 +301,7 @@ const appData = {
       userAvatar: '👨',
       area: 'kita',
       areaName: '北区',
+      areaEn: 'Kita',
       date: null,
       timeSlot: 'afternoon',
       urgency: 'normal',
@@ -319,6 +325,7 @@ const appData = {
       userAvatar: '💼',
       area: 'toshima',
       areaName: '豊島区',
+      areaEn: 'Toshima',
       date: null,
       timeSlot: 'afternoon',
       urgency: 'normal',
@@ -340,6 +347,7 @@ const appData = {
       userAvatar: '👩',
       area: 'bunkyo',
       areaName: '文京区',
+      areaEn: 'Bunkyo',
       date: '2024-12-17',
       timeSlot: 'morning',
       urgency: 'soon',
@@ -357,67 +365,92 @@ const appData = {
     {
       id: 'news-001',
       category: 'announcement',
+      categoryName: 'お知らせ',
+      categoryNameEn: 'Announcement',
       title: '年末年始の営業日程について',
       titleEn: 'Year-end and New Year schedule',
       excerpt: '12月29日〜1月3日まで事務所は休業となります。配達スケジュールの変更についてもご確認ください。',
       excerptEn: 'Office will be closed Dec 29 - Jan 3. Please check delivery schedule changes.',
-      content: '会員の皆様へ\n\n年末年始の営業日程についてお知らせいたします...',
+      content: '会員の皆様へ\n\n年末年始の営業日程についてお知らせいたします。\n\n【休業期間】\n12月29日（日）〜 1月3日（金）\n\n【配達スケジュール】\n年末最終配達：12月27日（金）\n年始初回配達：1月6日（月）\n\nご不便をおかけしますが、よろしくお願いいたします。',
+      contentEn: 'Dear Members,\n\nPlease note our year-end and New Year schedule.\n\n[Closed]\nDecember 29 (Sun) - January 3 (Fri)\n\n[Delivery Schedule]\nLast delivery of the year: December 27 (Fri)\nFirst delivery of new year: January 6 (Mon)\n\nThank you for your understanding.',
       date: '2024-12-10',
       author: '北東京生活クラブ事務局',
+      authorEn: 'North Tokyo Seikatsu Club Office',
       views: 1247,
-      featured: true
+      featured: true,
+      pinned: true
     },
     {
       id: 'news-002',
       category: 'products',
+      categoryName: '新商品',
+      categoryNameEn: 'New Products',
       title: '冬の新商品ラインナップのご紹介',
       titleEn: 'Winter new product lineup',
       excerpt: '今年の冬は特別な有機野菜セットをご用意しました。地元農家との協力により、新鮮で安全な野菜をお届けします。',
       excerptEn: 'Special organic vegetable sets available this winter. Fresh and safe vegetables from local farm partnerships.',
-      content: '寒い季節にぴったりの新商品が登場しました...',
+      content: '寒い季節にぴったりの新商品が登場しました。\n\n【有機野菜セット】\n・練馬大根\n・ほうれん草\n・白菜\n・にんじん\n\nすべて地元農家との契約栽培です。',
+      contentEn: 'New products perfect for the cold season.\n\n[Organic Vegetable Set]\n- Nerima Daikon\n- Spinach\n- Napa Cabbage\n- Carrots\n\nAll from contracted local farms.',
       date: '2024-12-08',
       author: '商品部',
+      authorEn: 'Product Department',
       views: 856,
-      featured: false
+      featured: false,
+      pinned: false
     },
     {
       id: 'news-003',
       category: 'community',
+      categoryName: 'コミュニティ',
+      categoryNameEn: 'Community',
       title: 'ボランティア感謝イベントを開催します',
       titleEn: 'Volunteer appreciation event',
       excerpt: '日頃からボランティア活動にご協力いただいている皆様への感謝を込めて、特別イベントを開催いたします。',
       excerptEn: 'Special event to thank our dedicated volunteers. All volunteers are invited.',
-      content: 'ボランティアの皆様へ\n\n日頃の活動に心より感謝申し上げます...',
+      content: 'ボランティアの皆様へ\n\n日頃の活動に心より感謝申し上げます。\n\n【日時】12月23日（月）17:00〜\n【場所】豊島区民センター\n【内容】感謝状贈呈、懇親会',
+      contentEn: 'To Our Volunteers,\n\nThank you for your dedication.\n\n[Date] December 23 (Mon) 17:00~\n[Location] Toshima Community Center\n[Program] Awards ceremony, social gathering',
       date: '2024-12-05',
       author: 'コミュニティ推進部',
+      authorEn: 'Community Development',
       views: 523,
-      featured: false
+      featured: false,
+      pinned: false
     },
     {
       id: 'news-004',
       category: 'events',
+      categoryName: 'イベント',
+      categoryNameEn: 'Events',
       title: '12月の料理教室参加者募集',
       titleEn: 'December cooking class registration open',
       excerpt: '地元の食材を使った冬のあったか料理教室を開催します。初心者の方も大歓迎です。',
       excerptEn: 'Winter warm cooking class using local ingredients. Beginners welcome.',
-      content: '毎月好評の料理教室、12月も開催いたします...',
+      content: '毎月好評の料理教室、12月も開催いたします。\n\n【メニュー】\n・ポトフ\n・手作りパン\n・りんごのタルト\n\n【参加費】500円',
+      contentEn: 'Our popular monthly cooking class continues in December.\n\n[Menu]\n- Pot-au-feu\n- Homemade bread\n- Apple tart\n\n[Fee] ¥500',
       date: '2024-12-03',
       author: 'イベント企画部',
+      authorEn: 'Event Planning',
       views: 412,
-      featured: false
+      featured: false,
+      pinned: false
     },
     {
       id: 'news-005',
       category: 'policy',
+      categoryName: '方針',
+      categoryNameEn: 'Policy',
       title: '2025年度の活動方針について',
       titleEn: 'FY2025 activity policy',
       excerpt: '来年度の組合活動方針案について、会員の皆様からのご意見を募集しています。',
       excerptEn: 'Seeking member feedback on next fiscal year activity policy proposal.',
-      content: '2025年度の活動方針案をまとめました...',
+      content: '2025年度の活動方針案をまとめました。\n\n【重点項目】\n1. 環境負荷低減\n2. 地域コミュニティ強化\n3. デジタル化推進\n\nご意見をお待ちしております。',
+      contentEn: 'FY2025 activity policy draft.\n\n[Key Items]\n1. Environmental impact reduction\n2. Community strengthening\n3. Digital transformation\n\nWe welcome your feedback.',
       date: '2024-12-01',
       author: '理事会',
+      authorEn: 'Board of Directors',
       views: 678,
-      featured: true
+      featured: true,
+      pinned: true
     }
   ],
 
@@ -428,10 +461,12 @@ const appData = {
     {
       id: 'event-001',
       category: 'workshop',
+      categoryName: 'ワークショップ',
+      categoryNameEn: 'Workshop',
       title: '冬のあったか料理教室',
       titleEn: 'Winter Warm Cooking Class',
-      description: '地元の有機野菜を使った、体が温まるレシピを学びます。',
-      descriptionEn: 'Learn warming recipes using local organic vegetables.',
+      description: '地元の有機野菜を使った、体が温まるレシピを学びます。初心者の方も大歓迎です。',
+      descriptionEn: 'Learn warming recipes using local organic vegetables. Beginners welcome.',
       date: '2024-12-20',
       time: '10:00',
       endTime: '12:00',
@@ -441,16 +476,20 @@ const appData = {
       registered: 15,
       fee: 500,
       organizer: 'はなさん',
+      organizerEn: 'Hana-san',
       image: null,
-      isRegistered: false
+      isRegistered: false,
+      featured: true
     },
     {
       id: 'event-002',
       category: 'meeting',
+      categoryName: '会議',
+      categoryNameEn: 'Meeting',
       title: '12月定例会議',
       titleEn: 'December Regular Meeting',
-      description: '今年の振り返りと来年の活動計画について話し合います。',
-      descriptionEn: 'Review this year and discuss next year plans.',
+      description: '今年の振り返りと来年の活動計画について話し合います。オンライン参加も可能です。',
+      descriptionEn: 'Review this year and discuss next year plans. Online participation available.',
       date: '2024-12-18',
       time: '19:00',
       endTime: '21:00',
@@ -460,16 +499,21 @@ const appData = {
       registered: 42,
       fee: 0,
       organizer: '理事会',
+      organizerEn: 'Board of Directors',
       image: null,
-      isRegistered: true
+      isRegistered: true,
+      featured: false,
+      roleRestricted: 'reijikai'
     },
     {
       id: 'event-003',
       category: 'social',
+      categoryName: '交流会',
+      categoryNameEn: 'Social',
       title: '年末感謝祭',
       titleEn: 'Year-End Appreciation Festival',
-      description: '会員の皆様への感謝を込めて、食事会と抽選会を開催します。',
-      descriptionEn: 'Dinner party and raffle to thank all members.',
+      description: '会員の皆様への感謝を込めて、食事会と抽選会を開催します。ご家族でのご参加も大歓迎です。',
+      descriptionEn: 'Dinner party and raffle to thank all members. Families welcome.',
       date: '2024-12-23',
       time: '17:00',
       endTime: '20:00',
@@ -479,16 +523,20 @@ const appData = {
       registered: 67,
       fee: 1000,
       organizer: 'イベント企画部',
+      organizerEn: 'Event Planning',
       image: null,
-      isRegistered: false
+      isRegistered: false,
+      featured: true
     },
     {
       id: 'event-004',
       category: 'learning',
+      categoryName: '学習会',
+      categoryNameEn: 'Learning',
       title: '食の安全セミナー',
       titleEn: 'Food Safety Seminar',
-      description: '食品添加物と有機農業について学ぶセミナーです。',
-      descriptionEn: 'Seminar on food additives and organic farming.',
+      description: '食品添加物と有機農業について学ぶセミナーです。専門家をお招きして解説いただきます。',
+      descriptionEn: 'Seminar on food additives and organic farming. Expert speakers invited.',
       date: '2024-12-25',
       time: '14:00',
       endTime: '16:00',
@@ -498,16 +546,20 @@ const appData = {
       registered: 23,
       fee: 0,
       organizer: '学習委員会',
+      organizerEn: 'Learning Committee',
       image: null,
-      isRegistered: false
+      isRegistered: false,
+      featured: false
     },
     {
       id: 'event-005',
       category: 'volunteer',
+      categoryName: 'ボランティア',
+      categoryNameEn: 'Volunteer',
       title: 'フードバンク仕分けボランティア',
       titleEn: 'Food Bank Sorting Volunteer',
-      description: 'フードバンクへの寄付食品の仕分け作業をお手伝いください。',
-      descriptionEn: 'Help sort donated food for the food bank.',
+      description: 'フードバンクへの寄付食品の仕分け作業をお手伝いください。初めての方も歓迎です。',
+      descriptionEn: 'Help sort donated food for the food bank. First-timers welcome.',
       date: '2024-12-28',
       time: '09:00',
       endTime: '12:00',
@@ -517,9 +569,22 @@ const appData = {
       registered: 8,
       fee: 0,
       organizer: 'ボランティア委員会',
+      organizerEn: 'Volunteer Committee',
       image: null,
-      isRegistered: true
+      isRegistered: true,
+      featured: false
     }
+  ],
+
+  // ==========================================
+  // KNOWLEDGE CATEGORIES (NEW - Required by app.js)
+  // ==========================================
+  knowledgeCategories: [
+    { id: 'faq', name: 'よくある質問', nameEn: 'FAQ', icon: '❓', color: 'blue' },
+    { id: 'recipes', name: 'レシピ', nameEn: 'Recipes', icon: '🍳', color: 'orange' },
+    { id: 'guides', name: 'ガイド', nameEn: 'Guides', icon: '📖', color: 'green' },
+    { id: 'policies', name: '規約・方針', nameEn: 'Policies', icon: '📋', color: 'gray' },
+    { id: 'tips', name: '豆知識', nameEn: 'Tips', icon: '💡', color: 'yellow' }
   ],
 
   // ==========================================
@@ -531,7 +596,8 @@ const appData = {
       category: 'faq',
       title: '配達日の変更方法',
       titleEn: 'How to change delivery date',
-      content: '配達日を変更するには、マイページから...',
+      content: '配達日を変更するには、マイページから「配達設定」を選択し、ご希望の日程を選んでください。変更は配達日の3日前まで可能です。',
+      contentEn: 'To change your delivery date, go to My Page, select "Delivery Settings", and choose your preferred date. Changes must be made 3 days before delivery.',
       views: 1523
     },
     {
@@ -539,7 +605,8 @@ const appData = {
       category: 'recipes',
       title: '簡単！野菜たっぷりスープ',
       titleEn: 'Easy Vegetable Soup Recipe',
-      content: '材料（4人分）: にんじん1本、玉ねぎ1個...',
+      content: '材料（4人分）: にんじん1本、玉ねぎ1個、キャベツ1/4個、コンソメ2個、水800ml\n\n作り方:\n1. 野菜を食べやすい大きさに切る\n2. 鍋に水とコンソメを入れ、沸騰させる\n3. 野菜を入れて15分煮込む\n4. 塩コショウで味を調える',
+      contentEn: 'Ingredients (4 servings): 1 carrot, 1 onion, 1/4 cabbage, 2 bouillon cubes, 800ml water\n\nDirections:\n1. Cut vegetables into bite-sized pieces\n2. Boil water with bouillon\n3. Add vegetables and simmer 15 min\n4. Season with salt and pepper',
       views: 892
     },
     {
@@ -547,7 +614,8 @@ const appData = {
       category: 'guides',
       title: '初めての方へ：生活クラブの使い方',
       titleEn: 'Getting Started with Seikatsu Club',
-      content: '生活クラブへようこそ！このガイドでは...',
+      content: '生活クラブへようこそ！このガイドでは、注文方法から配達の受け取りまで、基本的な使い方をご説明します。\n\n1. カタログを確認\n2. OCR用紙またはWebで注文\n3. 指定日に配達を受け取り\n\n困ったときは事務局までお気軽にご連絡ください。',
+      contentEn: 'Welcome to Seikatsu Club! This guide covers the basics from ordering to receiving delivery.\n\n1. Check the catalog\n2. Order via OCR form or Web\n3. Receive delivery on designated day\n\nContact the office if you need help.',
       views: 2341
     },
     {
@@ -555,7 +623,8 @@ const appData = {
       category: 'policies',
       title: '組合員規約',
       titleEn: 'Member Agreement',
-      content: '第1条（目的）この規約は...',
+      content: '第1条（目的）この規約は、生活クラブ消費生活協同組合連合会の組合員としての権利と義務を定めるものです。\n\n第2条（加入）本組合への加入は、出資金の払込みをもって成立します。',
+      contentEn: 'Article 1 (Purpose) This agreement defines the rights and obligations of members of the Seikatsu Club Consumers\' Co-operative Union.\n\nArticle 2 (Membership) Membership is established upon payment of share capital.',
       views: 456
     },
     {
@@ -563,7 +632,8 @@ const appData = {
       category: 'tips',
       title: '食材を長持ちさせる保存方法',
       titleEn: 'Food storage tips for longer freshness',
-      content: '野菜の保存方法をご紹介します...',
+      content: '野菜の保存方法をご紹介します。\n\n【葉物野菜】\n・湿らせた新聞紙で包み、ビニール袋に入れて冷蔵\n\n【根菜】\n・新聞紙で包み、冷暗所で保存\n\n【きのこ】\n・ペーパータオルで包み、密閉せずに冷蔵',
+      contentEn: 'Tips for storing vegetables.\n\n[Leafy Greens]\n- Wrap in damp newspaper, place in plastic bag, refrigerate\n\n[Root Vegetables]\n- Wrap in newspaper, store in cool dark place\n\n[Mushrooms]\n- Wrap in paper towel, refrigerate without sealing',
       views: 1876
     }
   ],
@@ -576,12 +646,17 @@ const appData = {
       id: 'prop-001',
       title: '2025年度の予算配分について',
       titleEn: 'FY2025 Budget Allocation',
-      description: '来年度の予算配分案を提案します。教育プログラムへの投資を20%増加させる内容です。',
-      descriptionEn: 'Proposing next fiscal year budget allocation with 20% increase in educational programs.',
+      description: '来年度の予算配分案を提案します。教育プログラムへの投資を20%増加させる内容です。地域コミュニティの強化と環境活動への支援も含まれています。',
+      descriptionEn: 'Proposing next fiscal year budget allocation with 20% increase in educational programs. Includes community strengthening and environmental initiatives.',
       category: 'budget',
+      categoryName: '予算',
+      categoryNameEn: 'Budget',
       status: 'active',
+      statusName: '投票中',
+      statusNameEn: 'Active',
       deadline: '2024-12-15',
-      createdBy: 'NT-R-001',
+      createdBy: '山田 太郎',
+      createdByEn: 'Taro Yamada',
       createdAt: '2024-12-01',
       votes: {
         yes: 142,
@@ -595,12 +670,17 @@ const appData = {
       id: 'prop-002',
       title: '新しいコミュニティスペースの設置',
       titleEn: 'New Community Space Installation',
-      description: '練馬区に新しいコミュニティスペースを設置する提案です。会員の交流促進が目的です。',
-      descriptionEn: 'Proposal to establish a new community space in Nerima ward to promote member interaction.',
+      description: '練馬区に新しいコミュニティスペースを設置する提案です。会員の交流促進が目的です。月2回のイベント開催を予定しています。',
+      descriptionEn: 'Proposal to establish a new community space in Nerima ward to promote member interaction. Planning bi-weekly events.',
       category: 'policy',
+      categoryName: '方針',
+      categoryNameEn: 'Policy',
       status: 'active',
+      statusName: '投票中',
+      statusNameEn: 'Active',
       deadline: '2024-12-20',
-      createdBy: 'NT-R-002',
+      createdBy: '佐藤 一郎',
+      createdByEn: 'Ichiro Sato',
       createdAt: '2024-12-05',
       votes: {
         yes: 89,
@@ -614,12 +694,17 @@ const appData = {
       id: 'prop-003',
       title: '環境配慮パッケージへの移行',
       titleEn: 'Transition to Eco-Friendly Packaging',
-      description: '2025年末までにすべての商品パッケージを環境配慮型に移行する提案です。',
-      descriptionEn: 'Proposal to transition all product packaging to eco-friendly materials by end of 2025.',
+      description: '2025年末までにすべての商品パッケージを環境配慮型に移行する提案です。プラスチック使用量を50%削減する目標を設定しています。',
+      descriptionEn: 'Proposal to transition all product packaging to eco-friendly materials by end of 2025. Goal: 50% reduction in plastic usage.',
       category: 'policy',
+      categoryName: '方針',
+      categoryNameEn: 'Policy',
       status: 'active',
+      statusName: '投票中',
+      statusNameEn: 'Active',
       deadline: '2024-12-25',
-      createdBy: 'NT-R-003',
+      createdBy: '田中 美咲',
+      createdByEn: 'Misaki Tanaka',
       createdAt: '2024-12-08',
       votes: {
         yes: 156,
@@ -656,26 +741,28 @@ const appData = {
   }
 };
 
-// Helper functions
+// ==========================================
+// HELPER FUNCTIONS
+// ==========================================
 const dataHelpers = {
   // Get user by role
   getUserByRole(role) {
-    return appData.users[role] || null;
+    return CoopData.users[role] || null;
   },
   
   // Get service category by ID
   getServiceCategory(id) {
-    return appData.serviceCategories.find(s => s.id === id);
+    return CoopData.serviceCategories.find(s => s.id === id);
   },
   
   // Get area by ID
   getArea(id) {
-    return appData.areas.find(a => a.id === id);
+    return CoopData.areas.find(a => a.id === id);
   },
   
   // Filter community requests
   filterCommunityRequests({ type, category, area, urgency } = {}) {
-    let results = [...appData.communityRequests];
+    let results = [...CoopData.communityRequests];
     
     if (type && type !== 'all') {
       results = results.filter(r => r.type === type);
@@ -732,7 +819,16 @@ const dataHelpers = {
   }
 };
 
-// Export for use
+// ==========================================
+// GLOBAL EXPOSURE - CRITICAL FOR BROWSER
+// ==========================================
+// Make CoopData available globally in browser
+if (typeof window !== 'undefined') {
+  window.CoopData = CoopData;
+  window.dataHelpers = dataHelpers;
+}
+
+// Export for Node.js/CommonJS (if needed for testing)
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { appData, dataHelpers };
+  module.exports = { CoopData, dataHelpers };
 }

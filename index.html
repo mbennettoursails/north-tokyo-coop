@@ -1195,10 +1195,12 @@
                     <button class="filter-pill" onclick="filterNews(this, 'event')">イベント</button>
                     <button class="filter-pill" onclick="filterNews(this, 'recipe')">レシピ</button>
                     <button class="filter-pill" onclick="filterNews(this, 'local')">地域</button>
+                    <button class="filter-pill" onclick="filterNews(this, 'product')">商品</button>
                 </div>
                 
-                <div class="space-y-3">
-                    <div class="news-card card-interactive">
+                <div id="news-list" class="space-y-3">
+                    <!-- Notice 1 -->
+                    <div class="news-card card-interactive" data-category="notice">
                         <div class="news-card-stripe bg-green-500"></div>
                         <div class="news-card-content">
                             <div class="flex items-center justify-between mb-2">
@@ -1213,7 +1215,8 @@
                         </div>
                     </div>
                     
-                    <div class="news-card card-interactive">
+                    <!-- Event 1 -->
+                    <div class="news-card card-interactive" data-category="event">
                         <div class="news-card-stripe bg-orange-500"></div>
                         <div class="news-card-content">
                             <div class="flex items-center justify-between mb-2">
@@ -1228,7 +1231,8 @@
                         </div>
                     </div>
                     
-                    <div class="news-card card-interactive">
+                    <!-- Recipe 1 -->
+                    <div class="news-card card-interactive" data-category="recipe">
                         <div class="news-card-stripe bg-yellow-500"></div>
                         <div class="news-card-content">
                             <div class="flex items-center justify-between mb-2">
@@ -1242,6 +1246,126 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Local 1 -->
+                    <div class="news-card card-interactive" data-category="local">
+                        <div class="news-card-stripe bg-blue-500"></div>
+                        <div class="news-card-content">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="request-badge" style="background: #dbeafe; color: #2563eb;">地域</span>
+                                <span class="text-xs text-gray-500">2024年12月7日</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">練馬区センター 年末大掃除ボランティア募集</h3>
+                            <p class="text-sm text-gray-600 mb-3">12月23日（土）に練馬区センターの大掃除を行います。ご協力いただける方を募集。</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span>👁 98人が閲覧</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product 1 -->
+                    <div class="news-card card-interactive" data-category="product">
+                        <div class="news-card-stripe bg-pink-500"></div>
+                        <div class="news-card-content">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="request-badge" style="background: #fce7f3; color: #db2777;">商品</span>
+                                <span class="text-xs text-gray-500">2024年12月6日</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">新商品：有機栽培いちご「あまおう」入荷</h3>
+                            <p class="text-sm text-gray-600 mb-3">福岡県産の有機栽培いちご「あまおう」が今週から注文可能になりました。</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span>👁 312人が閲覧</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notice 2 -->
+                    <div class="news-card card-interactive" data-category="notice">
+                        <div class="news-card-stripe bg-green-500"></div>
+                        <div class="news-card-content">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="request-badge normal">お知らせ</span>
+                                <span class="text-xs text-gray-500">2024年12月5日</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">2025年度 会費改定のお知らせ</h3>
+                            <p class="text-sm text-gray-600 mb-3">来年度より会費が改定されます。詳細は添付資料をご確認ください。</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span>👁 445人が閲覧</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recipe 2 -->
+                    <div class="news-card card-interactive" data-category="recipe">
+                        <div class="news-card-stripe bg-yellow-500"></div>
+                        <div class="news-card-content">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="request-badge" style="background: #fef9c3; color: #ca8a04;">レシピ</span>
+                                <span class="text-xs text-gray-500">2024年12月4日</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">簡単！白菜と豚肉のミルフィーユ鍋</h3>
+                            <p class="text-sm text-gray-600 mb-3">CO-OPの新鮮白菜を使った、見た目も美しいミルフィーユ鍋のレシピ。</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span>👁 278人が閲覧</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Event 2 -->
+                    <div class="news-card card-interactive" data-category="event">
+                        <div class="news-card-stripe bg-orange-500"></div>
+                        <div class="news-card-content">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="request-badge" style="background: #fef3c7; color: #d97706;">イベント</span>
+                                <span class="text-xs text-gray-500">2024年12月3日</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">冬の料理教室 参加者募集</h3>
+                            <p class="text-sm text-gray-600 mb-3">12月20日開催の料理教室。今回は「あったか鍋料理」がテーマです。</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span>👁 167人が閲覧</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Local 2 -->
+                    <div class="news-card card-interactive" data-category="local">
+                        <div class="news-card-stripe bg-blue-500"></div>
+                        <div class="news-card-content">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="request-badge" style="background: #dbeafe; color: #2563eb;">地域</span>
+                                <span class="text-xs text-gray-500">2024年12月2日</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">豊島区子育て支援センター 開放日のご案内</h3>
+                            <p class="text-sm text-gray-600 mb-3">毎週水曜日は親子で遊べる開放日。ぜひご参加ください。</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span>👁 134人が閲覧</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product 2 -->
+                    <div class="news-card card-interactive" data-category="product">
+                        <div class="news-card-stripe bg-pink-500"></div>
+                        <div class="news-card-content">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="request-badge" style="background: #fce7f3; color: #db2777;">商品</span>
+                                <span class="text-xs text-gray-500">2024年12月1日</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">おせち料理 早期予約受付中</h3>
+                            <p class="text-sm text-gray-600 mb-3">CO-OPオリジナルおせちの予約受付を開始しました。12月15日までの早期割引あり。</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span>👁 523人が閲覧</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Empty state for filtered results -->
+                <div id="news-empty" class="text-center py-12" style="display: none;">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <p class="text-gray-500">このカテゴリのニュースはありません</p>
                 </div>
             </div>
         </div>
@@ -1527,12 +1651,13 @@
             <div class="p-4">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-2xl font-bold text-gray-800">意思決定</h2>
-                    <button class="btn btn-primary py-2 px-4">+ 新規提案</button>
+                    <button class="btn btn-primary py-2 px-4" onclick="showModal('proposal-modal')">+ 新規提案</button>
                 </div>
                 
+                <!-- Stats -->
                 <div class="grid grid-cols-3 gap-3 mb-4">
                     <div class="stat-card text-center">
-                        <p class="stat-value text-xl">2</p>
+                        <p class="stat-value text-xl" id="decision-active-count">3</p>
                         <p class="stat-label text-xs">投票中</p>
                     </div>
                     <div class="stat-card text-center">
@@ -1545,27 +1670,282 @@
                     </div>
                 </div>
                 
-                <h3 class="font-bold text-gray-800 mb-3">投票中の提案</h3>
-                <div class="card p-4 mb-3">
-                    <div class="flex items-start justify-between mb-2">
-                        <span class="badge badge-reijikai text-xs">方針</span>
-                        <span class="text-xs text-gray-500">残り3日</span>
-                    </div>
-                    <h4 class="font-semibold text-gray-800 mb-2">2025年度の活動方針について</h4>
-                    <p class="text-sm text-gray-600 mb-4">来年度の重点活動項目として、地域コミュニティ強化を提案します。</p>
-                    <div class="mb-4">
-                        <div class="flex justify-between text-sm mb-2">
-                            <span class="text-gray-600">投票状況</span>
-                            <span class="text-gray-800 font-medium">24/30 (80%)</span>
+                <!-- Tabs -->
+                <div class="tabs mb-4">
+                    <button class="tab active" onclick="switchDecisionTab(this, 'active')">投票中</button>
+                    <button class="tab" onclick="switchDecisionTab(this, 'completed')">完了</button>
+                    <button class="tab" onclick="switchDecisionTab(this, 'my')">自分の提案</button>
+                </div>
+                
+                <!-- Active Proposals -->
+                <div id="decisions-active">
+                    <h3 class="font-bold text-gray-800 mb-3">投票中の提案</h3>
+                    <div class="space-y-4">
+                        <!-- Proposal 1 - Not yet voted -->
+                        <div class="card p-4" id="proposal-1">
+                            <div class="flex items-start justify-between mb-2">
+                                <span class="badge badge-reijikai text-xs">方針</span>
+                                <span class="text-xs text-gray-500">残り3日</span>
+                            </div>
+                            <h4 class="font-semibold text-gray-800 mb-2 cursor-pointer" onclick="openProposalDetail(1)">2025年度の活動方針について</h4>
+                            <p class="text-sm text-gray-600 mb-4">来年度の重点活動項目として、地域コミュニティ強化を提案します。具体的には...</p>
+                            
+                            <!-- Vote Progress -->
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-gray-600">投票状況</span>
+                                    <span class="text-gray-800 font-medium" id="proposal-1-progress">24/30 (80%)</span>
+                                </div>
+                                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-green-500 rounded-full transition-all duration-300" id="proposal-1-bar" style="width: 80%"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Vote Buttons (not voted yet) -->
+                            <div id="proposal-1-voting" class="flex space-x-2">
+                                <button class="vote-btn yes" onclick="castVote(1, 'yes')">賛成</button>
+                                <button class="vote-btn no" onclick="castVote(1, 'no')">反対</button>
+                                <button class="vote-btn abstain" onclick="castVote(1, 'abstain')">棄権</button>
+                            </div>
+                            
+                            <!-- Voted Confirmation (hidden initially) -->
+                            <div id="proposal-1-voted" class="hidden">
+                                <div class="flex items-center justify-between p-3 bg-green-50 rounded-xl border border-green-200">
+                                    <div class="flex items-center space-x-2">
+                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        <span class="text-green-800 font-medium" id="proposal-1-vote-text">投票済み</span>
+                                    </div>
+                                    <button class="text-sm text-green-600 underline" onclick="changeVote(1)">変更する</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <div class="h-full bg-green-500 rounded-full" style="width: 80%"></div>
+                        
+                        <!-- Proposal 2 - Already voted -->
+                        <div class="card p-4" id="proposal-2">
+                            <div class="flex items-start justify-between mb-2">
+                                <span class="badge" style="background: #fef3c7; color: #d97706; font-size: 12px;">予算</span>
+                                <span class="text-xs text-gray-500">残り5日</span>
+                            </div>
+                            <h4 class="font-semibold text-gray-800 mb-2 cursor-pointer" onclick="openProposalDetail(2)">コミュニティスペース改修予算</h4>
+                            <p class="text-sm text-gray-600 mb-4">練馬センターのコミュニティスペース改修に50万円の予算を提案します。</p>
+                            
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-gray-600">投票状況</span>
+                                    <span class="text-gray-800 font-medium" id="proposal-2-progress">18/30 (60%)</span>
+                                </div>
+                                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-green-500 rounded-full transition-all duration-300" id="proposal-2-bar" style="width: 60%"></div>
+                                </div>
+                            </div>
+                            
+                            <div id="proposal-2-voting" class="flex space-x-2 hidden">
+                                <button class="vote-btn yes" onclick="castVote(2, 'yes')">賛成</button>
+                                <button class="vote-btn no" onclick="castVote(2, 'no')">反対</button>
+                                <button class="vote-btn abstain" onclick="castVote(2, 'abstain')">棄権</button>
+                            </div>
+                            
+                            <div id="proposal-2-voted">
+                                <div class="flex items-center justify-between p-3 bg-green-50 rounded-xl border border-green-200">
+                                    <div class="flex items-center space-x-2">
+                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        <span class="text-green-800 font-medium" id="proposal-2-vote-text">賛成で投票済み</span>
+                                    </div>
+                                    <button class="text-sm text-green-600 underline" onclick="changeVote(2)">変更する</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Proposal 3 - Urgent -->
+                        <div class="card p-4 border-2 border-red-200" id="proposal-3">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex items-center space-x-2">
+                                    <span class="badge" style="background: #fef2f2; color: #dc2626; font-size: 12px;">緊急</span>
+                                    <span class="badge" style="background: #dbeafe; color: #2563eb; font-size: 12px;">イベント</span>
+                                </div>
+                                <span class="text-xs text-red-500 font-medium">残り1日</span>
+                            </div>
+                            <h4 class="font-semibold text-gray-800 mb-2 cursor-pointer" onclick="openProposalDetail(3)">新年会の開催について</h4>
+                            <p class="text-sm text-gray-600 mb-4">1月8日に新年交流会を開催することを提案します。会場と予算の承認をお願いします。</p>
+                            
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-gray-600">投票状況</span>
+                                    <span class="text-gray-800 font-medium" id="proposal-3-progress">28/30 (93%)</span>
+                                </div>
+                                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-green-500 rounded-full transition-all duration-300" id="proposal-3-bar" style="width: 93%"></div>
+                                </div>
+                            </div>
+                            
+                            <div id="proposal-3-voting" class="flex space-x-2">
+                                <button class="vote-btn yes" onclick="castVote(3, 'yes')">賛成</button>
+                                <button class="vote-btn no" onclick="castVote(3, 'no')">反対</button>
+                                <button class="vote-btn abstain" onclick="castVote(3, 'abstain')">棄権</button>
+                            </div>
+                            
+                            <div id="proposal-3-voted" class="hidden">
+                                <div class="flex items-center justify-between p-3 bg-green-50 rounded-xl border border-green-200">
+                                    <div class="flex items-center space-x-2">
+                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        <span class="text-green-800 font-medium" id="proposal-3-vote-text">投票済み</span>
+                                    </div>
+                                    <button class="text-sm text-green-600 underline" onclick="changeVote(3)">変更する</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="flex space-x-2">
-                        <button class="vote-btn yes">賛成</button>
-                        <button class="vote-btn no">反対</button>
-                        <button class="vote-btn abstain">棄権</button>
+                </div>
+                
+                <!-- Completed Proposals -->
+                <div id="decisions-completed" style="display: none;">
+                    <h3 class="font-bold text-gray-800 mb-3">完了した提案</h3>
+                    <div class="space-y-4">
+                        <!-- Completed 1 - Approved -->
+                        <div class="card p-4 cursor-pointer" onclick="openProposalDetail(101)">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex items-center space-x-2">
+                                    <span class="badge badge-reijikai text-xs">方針</span>
+                                    <span class="badge" style="background: #dcfce7; color: #16a34a; font-size: 12px;">✓ 可決</span>
+                                </div>
+                                <span class="text-xs text-gray-500">2024年12月5日</span>
+                            </div>
+                            <h4 class="font-semibold text-gray-800 mb-2">年末年始の配送スケジュール変更</h4>
+                            <p class="text-sm text-gray-600 mb-3">12月28日〜1月4日の配送スケジュール変更について</p>
+                            
+                            <!-- Result Bar -->
+                            <div class="mb-2">
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-green-600 font-medium">賛成 87%</span>
+                                    <span class="text-red-600">反対 10%</span>
+                                    <span class="text-gray-500">棄権 3%</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden flex">
+                                    <div class="h-full bg-green-500" style="width: 87%"></div>
+                                    <div class="h-full bg-red-500" style="width: 10%"></div>
+                                    <div class="h-full bg-gray-400" style="width: 3%"></div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500">投票率: 100% (30/30)</p>
+                        </div>
+                        
+                        <!-- Completed 2 - Rejected -->
+                        <div class="card p-4 cursor-pointer" onclick="openProposalDetail(102)">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex items-center space-x-2">
+                                    <span class="badge" style="background: #fef3c7; color: #d97706; font-size: 12px;">予算</span>
+                                    <span class="badge" style="background: #fef2f2; color: #dc2626; font-size: 12px;">✗ 否決</span>
+                                </div>
+                                <span class="text-xs text-gray-500">2024年12月1日</span>
+                            </div>
+                            <h4 class="font-semibold text-gray-800 mb-2">広報誌の印刷部数増加</h4>
+                            <p class="text-sm text-gray-600 mb-3">月刊広報誌の印刷部数を500部から700部に増加する提案</p>
+                            
+                            <div class="mb-2">
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-green-600">賛成 40%</span>
+                                    <span class="text-red-600 font-medium">反対 53%</span>
+                                    <span class="text-gray-500">棄権 7%</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden flex">
+                                    <div class="h-full bg-green-500" style="width: 40%"></div>
+                                    <div class="h-full bg-red-500" style="width: 53%"></div>
+                                    <div class="h-full bg-gray-400" style="width: 7%"></div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500">投票率: 93% (28/30)</p>
+                        </div>
+                        
+                        <!-- Completed 3 - Approved -->
+                        <div class="card p-4 cursor-pointer" onclick="openProposalDetail(103)">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex items-center space-x-2">
+                                    <span class="badge" style="background: #dbeafe; color: #2563eb; font-size: 12px;">イベント</span>
+                                    <span class="badge" style="background: #dcfce7; color: #16a34a; font-size: 12px;">✓ 可決</span>
+                                </div>
+                                <span class="text-xs text-gray-500">2024年11月28日</span>
+                            </div>
+                            <h4 class="font-semibold text-gray-800 mb-2">もちつき大会の開催承認</h4>
+                            <p class="text-sm text-gray-600 mb-3">1月15日開催のもちつき大会の企画と予算を承認</p>
+                            
+                            <div class="mb-2">
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-green-600 font-medium">賛成 93%</span>
+                                    <span class="text-red-600">反対 0%</span>
+                                    <span class="text-gray-500">棄権 7%</span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden flex">
+                                    <div class="h-full bg-green-500" style="width: 93%"></div>
+                                    <div class="h-full bg-red-500" style="width: 0%"></div>
+                                    <div class="h-full bg-gray-400" style="width: 7%"></div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500">投票率: 100% (30/30)</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- My Proposals -->
+                <div id="decisions-my" style="display: none;">
+                    <h3 class="font-bold text-gray-800 mb-3">自分の提案</h3>
+                    <div class="space-y-4">
+                        <div class="card p-4">
+                            <div class="flex items-start justify-between mb-2">
+                                <span class="badge badge-reijikai text-xs">方針</span>
+                                <span class="text-xs text-orange-500">投票中</span>
+                            </div>
+                            <h4 class="font-semibold text-gray-800 mb-2">2025年度の活動方針について</h4>
+                            <p class="text-sm text-gray-600 mb-3">来年度の重点活動項目として、地域コミュニティ強化を提案します。</p>
+                            
+                            <!-- Current Vote Status -->
+                            <div class="p-3 bg-gray-50 rounded-xl mb-3">
+                                <div class="grid grid-cols-3 gap-2 text-center mb-2">
+                                    <div>
+                                        <p class="text-xl font-bold text-green-600">18</p>
+                                        <p class="text-xs text-gray-500">賛成</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xl font-bold text-red-600">4</p>
+                                        <p class="text-xs text-gray-500">反対</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xl font-bold text-gray-500">2</p>
+                                        <p class="text-xs text-gray-500">棄権</p>
+                                    </div>
+                                </div>
+                                <div class="h-2 bg-gray-200 rounded-full overflow-hidden flex">
+                                    <div class="h-full bg-green-500" style="width: 75%"></div>
+                                    <div class="h-full bg-red-500" style="width: 17%"></div>
+                                    <div class="h-full bg-gray-400" style="width: 8%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                <button class="flex-1 btn btn-secondary py-2 text-sm" onclick="showConfirmation('提案を編集できません（投票中）')">編集</button>
+                                <button class="flex-1 btn py-2 text-sm" style="background: #fef2f2; color: #dc2626;" onclick="showConfirmation('提案を取り下げますか？')">取り下げ</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Draft proposal -->
+                        <div class="card p-4 border-2 border-dashed border-gray-300">
+                            <div class="flex items-start justify-between mb-2">
+                                <span class="badge" style="background: #f3f4f6; color: #6b7280; font-size: 12px;">下書き</span>
+                                <span class="text-xs text-gray-500">未公開</span>
+                            </div>
+                            <h4 class="font-semibold text-gray-800 mb-2">子育て支援活動の拡充</h4>
+                            <p class="text-sm text-gray-600 mb-3">子育て世帯向けのサポート活動を拡充する提案（作成中）</p>
+                            
+                            <div class="flex space-x-2">
+                                <button class="flex-1 btn btn-secondary py-2 text-sm">編集する</button>
+                                <button class="flex-1 btn btn-primary py-2 text-sm" onclick="showConfirmation('提案を公開しました')">公開する</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2307,6 +2687,198 @@
     </div>
 
     <!-- ========================================
+         PROPOSAL MODAL (Create New)
+         ======================================== -->
+    <div id="proposal-modal" class="modal-overlay" onclick="hideModal('proposal-modal')">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">新規提案</h3>
+                    <button onclick="hideModal('proposal-modal')" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">カテゴリー</label>
+                        <select class="input">
+                            <option>方針・ポリシー</option>
+                            <option>予算</option>
+                            <option>イベント</option>
+                            <option>その他</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">タイトル</label>
+                        <input type="text" class="input" placeholder="提案のタイトルを入力...">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">詳細説明</label>
+                        <textarea class="input" rows="4" placeholder="提案の詳細を説明してください..."></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">投票期限</label>
+                        <input type="date" class="input">
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex space-x-3">
+                    <button class="flex-1 btn btn-secondary" onclick="hideModal('proposal-modal')">下書き保存</button>
+                    <button class="flex-1 btn btn-primary" onclick="hideModal('proposal-modal'); showConfirmation('提案を公開しました');">公開する</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         PROPOSAL DETAIL MODAL
+         ======================================== -->
+    <div id="proposal-detail-modal" class="modal-fullscreen">
+        <div class="modal-header">
+            <button class="modal-back-btn" onclick="closeProposalDetailModal()">
+                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <h2 class="modal-title">提案詳細</h2>
+        </div>
+        <div class="modal-content">
+            <!-- Proposal Header -->
+            <div class="mb-4">
+                <div class="flex items-center space-x-2 mb-2">
+                    <span class="badge badge-reijikai text-xs">方針</span>
+                    <span class="text-xs text-gray-500">残り3日</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">2025年度の活動方針について</h3>
+                <div class="flex items-center text-sm text-gray-500">
+                    <span>提案者: 田中 花子</span>
+                    <span class="mx-2">•</span>
+                    <span>2024年12月7日 作成</span>
+                </div>
+            </div>
+            
+            <!-- Proposal Content -->
+            <div class="card p-4 mb-4">
+                <h4 class="font-semibold text-gray-800 mb-2">提案内容</h4>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    来年度の重点活動項目として、地域コミュニティ強化を提案します。
+                    <br><br>
+                    具体的には以下の3点を重点施策とします：
+                    <br><br>
+                    1. 月1回の地域交流イベントの開催<br>
+                    2. 子育て世帯向けサポートプログラムの拡充<br>
+                    3. 高齢者向け見守りネットワークの構築
+                    <br><br>
+                    予算は年間50万円を想定しています。各施策の詳細は添付資料をご確認ください。
+                </p>
+            </div>
+            
+            <!-- Current Voting Status -->
+            <div class="card p-4 mb-4">
+                <h4 class="font-semibold text-gray-800 mb-3">投票状況</h4>
+                
+                <div class="grid grid-cols-3 gap-4 text-center mb-4">
+                    <div class="p-3 bg-green-50 rounded-xl">
+                        <p class="text-2xl font-bold text-green-600">18</p>
+                        <p class="text-xs text-green-700">賛成</p>
+                    </div>
+                    <div class="p-3 bg-red-50 rounded-xl">
+                        <p class="text-2xl font-bold text-red-600">4</p>
+                        <p class="text-xs text-red-700">反対</p>
+                    </div>
+                    <div class="p-3 bg-gray-100 rounded-xl">
+                        <p class="text-2xl font-bold text-gray-500">2</p>
+                        <p class="text-xs text-gray-600">棄権</p>
+                    </div>
+                </div>
+                
+                <!-- Result Bar -->
+                <div class="mb-2">
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-green-600 font-medium">賛成 75%</span>
+                        <span class="text-red-600">反対 17%</span>
+                        <span class="text-gray-500">棄権 8%</span>
+                    </div>
+                    <div class="h-4 bg-gray-200 rounded-full overflow-hidden flex">
+                        <div class="h-full bg-green-500" style="width: 75%"></div>
+                        <div class="h-full bg-red-500" style="width: 17%"></div>
+                        <div class="h-full bg-gray-400" style="width: 8%"></div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between text-sm text-gray-500 mt-3">
+                    <span>投票率: 80% (24/30)</span>
+                    <span>可決基準: 過半数</span>
+                </div>
+            </div>
+            
+            <!-- Voting Section -->
+            <div class="card p-4 mb-4">
+                <h4 class="font-semibold text-gray-800 mb-3">あなたの投票</h4>
+                <div id="detail-voting" class="flex space-x-2">
+                    <button class="vote-btn yes flex-1" onclick="castDetailVote('yes')">賛成</button>
+                    <button class="vote-btn no flex-1" onclick="castDetailVote('no')">反対</button>
+                    <button class="vote-btn abstain flex-1" onclick="castDetailVote('abstain')">棄権</button>
+                </div>
+                <div id="detail-voted" class="hidden">
+                    <div class="flex items-center justify-between p-3 bg-green-50 rounded-xl border border-green-200">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-green-800 font-medium" id="detail-vote-text">投票済み</span>
+                        </div>
+                        <button class="text-sm text-green-600 underline" onclick="changeDetailVote()">変更する</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Comments Section -->
+            <div class="card p-4">
+                <h4 class="font-semibold text-gray-800 mb-3">コメント (3)</h4>
+                
+                <div class="space-y-4 mb-4">
+                    <div class="border-b border-gray-100 pb-3">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-medium text-gray-800">山田さん</span>
+                            <span class="text-xs text-gray-500">2日前</span>
+                        </div>
+                        <p class="text-sm text-gray-600">地域交流イベントは大賛成です。子どもたちが参加できる内容も検討していただけると嬉しいです。</p>
+                    </div>
+                    
+                    <div class="border-b border-gray-100 pb-3">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-medium text-gray-800">佐藤さん</span>
+                            <span class="text-xs text-gray-500">1日前</span>
+                        </div>
+                        <p class="text-sm text-gray-600">予算の内訳をもう少し詳しく説明していただけますか？</p>
+                    </div>
+                    
+                    <div class="pb-1">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-medium text-gray-800">田中さん (提案者)</span>
+                            <span class="text-xs text-gray-500">12時間前</span>
+                        </div>
+                        <p class="text-sm text-gray-600">佐藤さん、ご質問ありがとうございます。予算内訳は添付資料の2ページ目に記載しております。</p>
+                    </div>
+                </div>
+                
+                <!-- Add Comment -->
+                <div class="flex space-x-2">
+                    <input type="text" class="input flex-1" placeholder="コメントを入力...">
+                    <button class="btn btn-primary px-4">送信</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
          CONFIRMATION TOAST
          ======================================== -->
     <div id="confirmation-toast" class="fixed top-4 left-4 right-4 bg-green-600 text-white p-4 rounded-xl shadow-lg transform -translate-y-full opacity-0 transition-all duration-300" style="z-index: 400;">
@@ -2419,8 +2991,116 @@
 
         // News Filter
         function filterNews(btn, category) {
+            // Update active pill
             document.querySelectorAll('.filter-pill').forEach(pill => pill.classList.remove('active'));
             btn.classList.add('active');
+            
+            // Get all news cards
+            const newsCards = document.querySelectorAll('#news-list .news-card');
+            let visibleCount = 0;
+            
+            newsCards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                
+                if (category === 'all' || cardCategory === category) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Show/hide empty state
+            const emptyState = document.getElementById('news-empty');
+            if (visibleCount === 0) {
+                emptyState.style.display = 'block';
+            } else {
+                emptyState.style.display = 'none';
+            }
+        }
+
+        // Decision Tabs
+        function switchDecisionTab(btn, tabName) {
+            document.querySelectorAll('#view-decisions .tab').forEach(tab => tab.classList.remove('active'));
+            btn.classList.add('active');
+            
+            document.getElementById('decisions-active').style.display = tabName === 'active' ? 'block' : 'none';
+            document.getElementById('decisions-completed').style.display = tabName === 'completed' ? 'block' : 'none';
+            document.getElementById('decisions-my').style.display = tabName === 'my' ? 'block' : 'none';
+        }
+
+        // Voting State
+        const voteState = {
+            1: null,
+            2: 'yes', // Already voted
+            3: null
+        };
+
+        // Cast Vote
+        function castVote(proposalId, vote) {
+            voteState[proposalId] = vote;
+            
+            // Hide voting buttons, show confirmation
+            document.getElementById(`proposal-${proposalId}-voting`).classList.add('hidden');
+            document.getElementById(`proposal-${proposalId}-voted`).classList.remove('hidden');
+            
+            // Update vote text
+            const voteTexts = { yes: '賛成', no: '反対', abstain: '棄権' };
+            document.getElementById(`proposal-${proposalId}-vote-text`).textContent = `${voteTexts[vote]}で投票済み`;
+            
+            // Update progress bar (simulate vote count increase)
+            const progressEl = document.getElementById(`proposal-${proposalId}-progress`);
+            const barEl = document.getElementById(`proposal-${proposalId}-bar`);
+            
+            if (proposalId === 1) {
+                progressEl.textContent = '25/30 (83%)';
+                barEl.style.width = '83%';
+            } else if (proposalId === 3) {
+                progressEl.textContent = '29/30 (97%)';
+                barEl.style.width = '97%';
+            }
+            
+            showConfirmation(`${voteTexts[vote]}で投票しました`);
+        }
+
+        // Change Vote
+        function changeVote(proposalId) {
+            // Show voting buttons, hide confirmation
+            document.getElementById(`proposal-${proposalId}-voting`).classList.remove('hidden');
+            document.getElementById(`proposal-${proposalId}-voted`).classList.add('hidden');
+            voteState[proposalId] = null;
+        }
+
+        // Open Proposal Detail
+        function openProposalDetail(proposalId) {
+            document.getElementById('proposal-detail-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // You could populate different content based on proposalId
+            // For demo, just showing the modal
+        }
+        
+        // Close Proposal Detail Modal
+        function closeProposalDetailModal() {
+            document.getElementById('proposal-detail-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Cast vote in detail view
+        function castDetailVote(vote) {
+            document.getElementById('detail-voting').classList.add('hidden');
+            document.getElementById('detail-voted').classList.remove('hidden');
+            
+            const voteTexts = { yes: '賛成', no: '反対', abstain: '棄権' };
+            document.getElementById('detail-vote-text').textContent = `${voteTexts[vote]}で投票済み`;
+            
+            showConfirmation(`${voteTexts[vote]}で投票しました`);
+        }
+        
+        // Change vote in detail view
+        function changeDetailVote() {
+            document.getElementById('detail-voting').classList.remove('hidden');
+            document.getElementById('detail-voted').classList.add('hidden');
         }
 
         // Profile Modals

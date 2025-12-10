@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="theme-color" content="#86bd5e">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="CO-OP Hub">
+    <meta name="description" content="North Tokyo COOP Hub - Community Platform for 36,000 members">
+    
+    <title>北東京CO-OP Hub</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">    
+    <!-- Application Styles -->
+    <link rel="stylesheet" href="./app.css">
+</head>
+<body>
+
+    <!-- ============================================
+         LOGIN PAGE
+         ============================================ -->
+    <div class="login-page">
+        <div class="login-logo">🤝</div>
+        <h1 class="login-title" data-ja="北東京CO-OP Hub" data-en="North Tokyo COOP Hub">北東京CO-OP Hub</h1>
+        <p class="login-subtitle" data-ja="コミュニティプラットフォーム" data-en="Community Platform">コミュニティプラットフォーム</p>
+        
+        <div class="login-card">
+            <div class="qr-placeholder">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 11h2v2H3v-2zm8-6h2v4h-2V5zm-2 6h4v4h-2v-2H9v-2zm6 0h2v2h2v2h-2v2h-2v-2h-2v-2h2v-2zm4 2h2v4h-2v-4zM5 3h4v4H5V3zm2 2v0H7zm-2 8h4v4H5v-4zm2 2v0zm8-12h4v4h-4V3zm2 2v0zM3 3h2v2H3V3zm18 0h2v2h-2V3zm0 18h2v2h-2v-2zM3 21h2v2H3v-2z"/>
+                </svg>
+            </div>
+            <p class="login-prompt" data-ja="QRコードをスキャンしてログイン" data-en="Scan QR code to login">QRコードをスキャンしてログイン</p>
+            
+            <div class="demo-section">
+                <p class="demo-label" data-ja="デモモード：役割を選択" data-en="Demo: Select a role">デモモード：役割を選択</p>
+                
+                <div class="role-selector">
+                    <button class="role-btn" data-role="reijikai" onclick="CoopApp.selectRole('reijikai')">
+                        <div class="role-btn-icon">👔</div>
+                        <div class="role-btn-label" data-ja="委員会" data-en="Committee">委員会</div>
+                    </button>
+                    <button class="role-btn" data-role="shokuin" onclick="CoopApp.selectRole('shokuin')">
+                        <div class="role-btn-icon">💼</div>
+                        <div class="role-btn-label" data-ja="職員" data-en="Staff">職員</div>
+                    </button>
+                    <button class="role-btn" data-role="volunteer" onclick="CoopApp.selectRole('volunteer')">
+                        <div class="role-btn-icon">🤝</div>
+                        <div class="role-btn-label" data-ja="ボランティア" data-en="Volunteer">ボランティア</div>
+                    </button>
+                </div>
+                
+                <button class="login-btn" id="loginBtn" onclick="CoopApp.login()" data-ja="デモログイン" data-en="Demo Login">デモログイン</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MAIN APPLICATION
+         ============================================ -->
+    <div class="app-container">
+        
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="header-logo">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <h1 class="header-title" data-ja="北東京CO-OP Hub" data-en="North Tokyo COOP">北東京CO-OP Hub</h1>
+            </div>
+            <div class="lang-toggle">
+                <span id="langJa" class="active">JP</span>
+                <button class="lang-btn" id="langToggle" onclick="CoopApp.toggleLanguage()"></button>
+                <span id="langEn">EN</span>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- Dashboard Page -->
+            <div class="page active" id="page-dashboard">
+                <div class="card welcome-card mb-4">
+                    <div class="avatar" id="userAvatar">🤝</div>
+                    <div class="welcome-info">
+                        <div class="welcome-label" data-ja="こんにちは" data-en="Welcome">こんにちは</div>
+                        <div class="welcome-name" id="userName">ゲスト</div>
+                    </div>
+                    <span class="badge badge-volunteer" id="userRoleBadge">ボランティア</span>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label" data-ja="アクティブな依頼" data-en="Active Requests">アクティブな依頼</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value blue">5</div>
+                        <div class="stat-label" data-ja="今後のイベント" data-en="Upcoming Events">今後のイベント</div>
+                    </div>
+                </div>
+                
+                <div class="card p-4">
+                    <h3 class="page-title" style="font-size: 16px;" data-ja="クイックアクション" data-en="Quick Actions">クイックアクション</h3>
+                    <button class="quick-action" data-action="community" onclick="CoopApp.navigateTo('community')">
+                        <span class="quick-action-icon">🤝</span>
+                        <div class="quick-action-text">
+                            <h4 data-ja="助けを求める" data-en="Request Help">助けを求める</h4>
+                            <p data-ja="コミュニティに依頼を投稿" data-en="Post to community board">コミュニティに依頼を投稿</p>
+                        </div>
+                    </button>
+                    <button class="quick-action" data-action="events" onclick="CoopApp.navigateTo('events')">
+                        <span class="quick-action-icon">📅</span>
+                        <div class="quick-action-text">
+                            <h4 data-ja="イベントを見る" data-en="Browse Events">イベントを見る</h4>
+                            <p data-ja="参加登録" data-en="Register to participate">参加登録</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- News Page -->
+            <div class="page" id="page-news">
+                <h2 class="page-title" data-ja="ニュース" data-en="News">ニュース</h2>
+                <div class="card p-4" id="newsContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+            
+            <!-- Community Page -->
+            <div class="page" id="page-community">
+                <h2 class="page-title" data-ja="コミュニティ" data-en="Community">コミュニティ</h2>
+                <div class="card placeholder">
+                    <div class="placeholder-icon">🤝</div>
+                    <p class="placeholder-text" data-ja="コミュニティ助け合い機能で、メンバー同士がサポートし合えます。" data-en="Community mutual aid allows members to support each other.">コミュニティ助け合い機能で、メンバー同士がサポートし合えます。</p>
+                </div>
+            </div>
+            
+            <!-- Events Page -->
+            <div class="page" id="page-events">
+                <h2 class="page-title" data-ja="イベント" data-en="Events">イベント</h2>
+                <div class="card p-4" id="eventsContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+            
+            <!-- Knowledge Page -->
+            <div class="page" id="page-knowledge">
+                <h2 class="page-title" data-ja="知識倉庫" data-en="Knowledge Base">知識倉庫</h2>
+                <div class="card placeholder">
+                    <div class="placeholder-icon">📚</div>
+                    <p class="placeholder-text" data-ja="FAQ、ガイド、レシピなどの情報を検索できます。" data-en="Search FAQs, guides, recipes and more.">FAQ、ガイド、レシピなどの情報を検索できます。</p>
+                </div>
+            </div>
+            
+            <!-- Profile Page -->
+            <div class="page" id="page-profile">
+                <h2 class="page-title" data-ja="プロフィール" data-en="Profile">プロフィール</h2>
+                <div class="card p-4">
+                    <div class="welcome-card" style="padding: 0; margin-bottom: 16px;">
+                        <div class="avatar avatar-lg" id="profileAvatar">🤝</div>
+                        <div class="welcome-info">
+                            <div class="welcome-name" id="profileName">ゲスト</div>
+                            <div class="welcome-label">NT-12345</div>
+                        </div>
+                    </div>
+                    <div style="border-top: 1px solid #eee; padding-top: 16px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: #666;" data-ja="地域" data-en="Area">地域</span>
+                            <span style="font-weight: 500;">練馬区</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #666;" data-ja="役割" data-en="Role">役割</span>
+                            <span class="badge badge-volunteer" id="profileRoleBadge">ボランティア</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Decisions Page (Reijikai) -->
+            <div class="page" id="page-decisions">
+                <h2 class="page-title" data-ja="意思決定" data-en="Decisions">意思決定</h2>
+                <div class="card placeholder">
+                    <div class="placeholder-icon">🗳️</div>
+                    <p class="placeholder-text" data-ja="提案の作成と投票ができます。" data-en="Create proposals and vote on decisions.">提案の作成と投票ができます。</p>
+                </div>
+            </div>
+            
+            <!-- Admin Page (Shokuin) -->
+            <div class="page" id="page-admin">
+                <h2 class="page-title" data-ja="コンテンツ管理" data-en="Content Management">コンテンツ管理</h2>
+                <div class="card placeholder">
+                    <div class="placeholder-icon">📝</div>
+                    <p class="placeholder-text" data-ja="ニュース、イベント、ナレッジベースを管理できます。" data-en="Manage news, events, and knowledge base.">ニュース、イベント、ナレッジベースを管理できます。</p>
+                </div>
+            </div>
+            
+        </main>
+        
+        <!-- ============================================
+             BOTTOM NAVIGATION
+             ============================================ -->
+        <nav class="bottom-nav">
+            <button class="bottom-nav-item active" data-page="dashboard" onclick="CoopApp.navigateTo('dashboard')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+                <span data-ja="ホーム" data-en="Home">ホーム</span>
+            </button>
+            <button class="bottom-nav-item" data-page="news" onclick="CoopApp.navigateTo('news')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                </svg>
+                <span data-ja="ニュース" data-en="News">ニュース</span>
+            </button>
+            <button class="bottom-nav-item" data-page="community" onclick="CoopApp.navigateTo('community')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                <span data-ja="コミュニティ" data-en="Community">コミュニティ</span>
+            </button>
+            <button class="bottom-nav-item" data-page="events" onclick="CoopApp.navigateTo('events')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span data-ja="イベント" data-en="Events">イベント</span>
+            </button>
+            <button class="bottom-nav-item" id="moreBtn" onclick="CoopApp.openMoreMenu()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+                <span data-ja="その他" data-en="More">その他</span>
+            </button>
+        </nav>
+        
+        <!-- ============================================
+             MORE MENU
+             ============================================ -->
+        <div class="more-menu-overlay" id="moreOverlay" onclick="CoopApp.closeMoreMenu()"></div>
+        
+        <div class="more-menu-drawer" id="moreDrawer">
+            <div class="drawer-handle"></div>
+            
+            <!-- User Header -->
+            <div class="drawer-header">
+                <div class="drawer-avatar" id="drawerAvatar">🤝</div>
+                <div class="drawer-user-info">
+                    <div class="drawer-user-name" id="drawerName">ゲスト</div>
+                    <div class="drawer-user-id">NT-12345</div>
+                </div>
+                <span class="badge badge-volunteer" id="drawerRoleBadge">ボランティア</span>
+            </div>
+            
+            <!-- Menu Items -->
+            <div class="drawer-menu">
+                <!-- Knowledge -->
+                <button class="menu-item" data-page="knowledge" onclick="CoopApp.navigateFromMenu('knowledge')">
+                    <div class="menu-icon yellow">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                    </div>
+                    <span class="menu-label" data-ja="知識倉庫" data-en="Knowledge">知識倉庫</span>
+                    <div class="menu-chevron">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </button>
+                
+                <!-- Profile -->
+                <button class="menu-item" data-page="profile" onclick="CoopApp.navigateFromMenu('profile')">
+                    <div class="menu-icon green">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <span class="menu-label" data-ja="プロフィール" data-en="Profile">プロフィール</span>
+                    <div class="menu-chevron">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </button>
+                
+                <!-- Decisions (Reijikai only) -->
+                <button class="menu-item reijikai-only" data-page="decisions" onclick="CoopApp.navigateFromMenu('decisions')">
+                    <div class="menu-icon purple">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                        </svg>
+                    </div>
+                    <span class="menu-label" data-ja="意思決定" data-en="Decisions">意思決定</span>
+                    <span class="menu-badge">2</span>
+                    <div class="menu-chevron">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </button>
+                
+                <!-- Content Management (Shokuin + Reijikai) -->
+                <button class="menu-item shokuin-only" data-page="admin" onclick="CoopApp.navigateFromMenu('admin')">
+                    <div class="menu-icon blue">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                    </div>
+                    <span class="menu-label" data-ja="コンテンツ管理" data-en="Content">コンテンツ管理</span>
+                    <div class="menu-chevron">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </button>
+                
+                <div class="menu-divider"></div>
+                
+                <!-- Shop -->
+                <a href="https://shop.seikatsuclub.coop" target="_blank" class="menu-item">
+                    <div class="menu-icon orange">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                        </svg>
+                    </div>
+                    <span class="menu-label" data-ja="商品注文" data-en="Shop">商品注文</span>
+                    <div class="menu-chevron">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                    </div>
+                </a>
+                
+                <!-- Settings -->
+                <button class="menu-item">
+                    <div class="menu-icon gray">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <span class="menu-label" data-ja="設定" data-en="Settings">設定</span>
+                    <div class="menu-chevron">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </button>
+                
+                <div class="menu-divider"></div>
+                
+                <!-- Logout -->
+                <button class="menu-item danger" id="logoutBtn" onclick="CoopApp.logout()">
+                    <div class="menu-icon red">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                    </div>
+                    <span class="menu-label" data-ja="ログアウト" data-en="Logout">ログアウト</span>
+                </button>
+            </div>
+            
+            <!-- Footer -->
+            <div class="drawer-footer">
+                北東京CO-OP Hub v1.0.0
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- ============================================
+         SCRIPTS (Load order matters!)
+         ============================================ -->
+    <!-- Data & Translations -->
+    <script src="js/data.js"></script>
+    <script src="js/i18n.js"></script>
+
+    <!-- Core Application -->
+    <script src="js/app.js"></script>
+    <script src="js/router.js"></script>
+
+    <!-- Page-specific (load decisions.js when decisions page is used) -->
+    <script src="js/decisions.js"></script>
+
+</body>
+</html>

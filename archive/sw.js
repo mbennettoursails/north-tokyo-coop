@@ -3,9 +3,9 @@
  * Provides offline capability and caching for the PWA
  */
 
-const CACHE_NAME = 'coop-hub-v1.0.0';
-const STATIC_CACHE = 'coop-hub-static-v1.0.0';
-const DYNAMIC_CACHE = 'coop-hub-dynamic-v1.0.0';
+const CACHE_NAME = 'coop-hub-v1.0.1';
+const STATIC_CACHE = 'coop-hub-static-v1.0.1';
+const DYNAMIC_CACHE = 'coop-hub-dynamic-v1.0.1';
 
 // Files to cache immediately on install
 const STATIC_ASSETS = [
@@ -20,7 +20,7 @@ const STATIC_ASSETS = [
 
 // External resources to cache
 const EXTERNAL_ASSETS = [
-    'https://cdn.tailwindcss.com',
+    'https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css',
     'https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js',
     'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap'
 ];

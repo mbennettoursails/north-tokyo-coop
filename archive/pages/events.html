@@ -1,0 +1,1165 @@
+<!-- Events Page - Modern Design v3 -->
+<div class="events-page" x-data="eventsPage()">
+    
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-content">
+            <h1 class="page-title" x-text="language === 'ja' ? 'イベント' : 'Events'">イベント</h1>
+            <p class="page-subtitle" x-text="language === 'ja' ? '地域のイベントに参加しよう' : 'Join community events'">地域のイベントに参加しよう</p>
+        </div>
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <button 
+                class="filter-tab" 
+                :class="{ 'active': filter === 'all' }"
+                @click="filter = 'all'"
+                x-text="language === 'ja' ? 'すべて' : 'All'">すべて</button>
+            <button 
+                class="filter-tab" 
+                :class="{ 'active': filter === 'upcoming' }"
+                @click="filter = 'upcoming'"
+                x-text="language === 'ja' ? '今後' : 'Upcoming'">今後</button>
+            <button 
+                class="filter-tab" 
+                :class="{ 'active': filter === 'registered' }"
+                @click="filter = 'registered'"
+                x-text="language === 'ja' ? '参加予定' : 'Registered'">参加予定</button>
+        </div>
+    </div>
+
+    <!-- Featured Event Banner -->
+    <template x-if="featuredEvent">
+        <div class="featured-event-banner" @click="openEventDetail(featuredEvent)">
+            <div class="featured-badge">
+                <span>⭐</span>
+                <span x-text="language === 'ja' ? '注目イベント' : 'Featured'">注目イベント</span>
+            </div>
+            <div class="featured-content">
+                <div class="featured-date">
+                    <span class="featured-month" x-text="formatMonth(featuredEvent.date)"></span>
+                    <span class="featured-day" x-text="formatDay(featuredEvent.date)"></span>
+                </div>
+                <div class="featured-info">
+                    <h3 class="featured-title" x-text="featuredEvent.title[language] || featuredEvent.title.ja"></h3>
+                    <p class="featured-location">
+                        <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        </svg>
+                        <span x-text="featuredEvent.location[language] || featuredEvent.location.ja"></span>
+                    </p>
+                    <div class="featured-meta">
+                        <span class="featured-time" x-text="featuredEvent.time"></span>
+                        <span class="featured-spots" :class="featuredEvent.spotsLeft === 0 ? 'full' : ''">
+                            <span x-text="featuredEvent.spotsLeft === 0 ? (language === 'ja' ? '満席' : 'Full') : featuredEvent.spotsLeft + (language === 'ja' ? '席空き' : ' spots')"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="featured-arrow">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Events List -->
+    <div class="events-list">
+        <template x-for="(group, monthKey) in groupedEvents" :key="monthKey">
+            <div class="events-month-group">
+                <!-- Month Header -->
+                <div class="month-header">
+                    <div class="month-indicator"></div>
+                    <h3 class="month-title" x-text="monthKey"></h3>
+                </div>
+                
+                <!-- Event Cards -->
+                <div class="events-cards">
+                    <template x-for="event in group" :key="event.id">
+                        <div class="event-card" @click="openEventDetail(event)" :class="{ 'event-card-registered': event.isRegistered }">
+                            <!-- Date Badge -->
+                            <div class="event-date-badge" :class="event.isRegistered ? 'registered' : ''">
+                                <span class="event-date-month" x-text="formatMonth(event.date)"></span>
+                                <span class="event-date-day" x-text="formatDay(event.date)"></span>
+                                <span class="event-date-weekday" x-text="formatWeekday(event.date)"></span>
+                            </div>
+                            
+                            <!-- Event Info -->
+                            <div class="event-info">
+                                <!-- Category & Tags -->
+                                <div class="event-tags">
+                                    <span class="event-category" x-text="event.category[language] || event.category.ja"></span>
+                                    <template x-if="event.isRegistered">
+                                        <span class="event-tag registered">
+                                            <svg class="icon-xs" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span x-text="language === 'ja' ? '参加予定' : 'Registered'"></span>
+                                        </span>
+                                    </template>
+                                    <template x-if="event.isFree">
+                                        <span class="event-tag free" x-text="language === 'ja' ? '無料' : 'Free'">無料</span>
+                                    </template>
+                                </div>
+                                
+                                <!-- Title -->
+                                <h4 class="event-title" x-text="event.title[language] || event.title.ja"></h4>
+                                
+                                <!-- Details -->
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span x-text="event.time + ' - ' + event.endTime"></span>
+                                    </div>
+                                    <div class="event-detail">
+                                        <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        </svg>
+                                        <span x-text="event.location[language] || event.location.ja"></span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Footer -->
+                                <div class="event-footer">
+                                    <div class="event-capacity">
+                                        <div class="capacity-bar">
+                                            <div class="capacity-fill" :style="'width: ' + ((event.registered / event.capacity) * 100) + '%'" :class="event.spotsLeft === 0 ? 'full' : ''"></div>
+                                        </div>
+                                        <span class="capacity-text" :class="event.spotsLeft === 0 ? 'full' : ''">
+                                            <span x-text="event.spotsLeft === 0 ? (language === 'ja' ? '満席' : 'Full') : event.spotsLeft + '/' + event.capacity + (language === 'ja' ? ' 空き' : ' available')"></span>
+                                        </span>
+                                    </div>
+                                    <template x-if="!event.isFree">
+                                        <span class="event-fee">¥<span x-text="event.fee.toLocaleString()"></span></span>
+                                    </template>
+                                </div>
+                            </div>
+                            
+                            <!-- Arrow -->
+                            <div class="event-arrow">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <!-- Empty State -->
+    <template x-if="Object.keys(groupedEvents).length === 0">
+        <div class="empty-state">
+            <div class="empty-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+            </div>
+            <h3 x-text="language === 'ja' ? 'イベントがありません' : 'No events'">イベントがありません</h3>
+            <p x-text="language === 'ja' ? '新しいイベントが追加されるまでお待ちください' : 'Check back later for new events'">新しいイベントが追加されるまでお待ちください</p>
+        </div>
+    </template>
+
+    <!-- Event Detail Modal -->
+    <template x-if="selectedEvent">
+        <div class="modal-overlay" @click.self="selectedEvent = null">
+            <div class="modal-content" @click.stop>
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <div class="modal-header-info">
+                        <span class="modal-category" x-text="selectedEvent.category[language] || selectedEvent.category.ja"></span>
+                        <h2 class="modal-title" x-text="selectedEvent.title[language] || selectedEvent.title.ja"></h2>
+                    </div>
+                    <button class="modal-close" @click="selectedEvent = null">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <!-- Description -->
+                    <p class="modal-description" x-text="selectedEvent.description[language] || selectedEvent.description.ja"></p>
+                    
+                    <!-- Event Details Grid -->
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-icon blue">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="detail-text">
+                                <span class="detail-label" x-text="language === 'ja' ? '日時' : 'Date & Time'">日時</span>
+                                <span class="detail-value" x-text="formatFullDate(selectedEvent.date) + ' ' + selectedEvent.time + ' - ' + selectedEvent.endTime"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-icon green">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="detail-text">
+                                <span class="detail-label" x-text="language === 'ja' ? '場所' : 'Location'">場所</span>
+                                <span class="detail-value" x-text="selectedEvent.location[language] || selectedEvent.location.ja"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-icon purple">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="detail-text">
+                                <span class="detail-label" x-text="language === 'ja' ? '定員' : 'Capacity'">定員</span>
+                                <span class="detail-value">
+                                    <span x-text="selectedEvent.registered + '/' + selectedEvent.capacity"></span>
+                                    <span class="detail-status" :class="selectedEvent.spotsLeft === 0 ? 'full' : 'available'" x-text="selectedEvent.spotsLeft === 0 ? (language === 'ja' ? '満席' : 'Full') : selectedEvent.spotsLeft + (language === 'ja' ? '席空き' : ' left')"></span>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-icon yellow">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="detail-text">
+                                <span class="detail-label" x-text="language === 'ja' ? '参加費' : 'Fee'">参加費</span>
+                                <span class="detail-value" x-text="selectedEvent.fee === 0 ? (language === 'ja' ? '無料' : 'Free') : '¥' + selectedEvent.fee.toLocaleString()"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Organizer -->
+                    <div class="organizer-info">
+                        <span class="organizer-label" x-text="language === 'ja' ? '主催' : 'Organizer'">主催</span>
+                        <span class="organizer-name" x-text="selectedEvent.organizer[language] || selectedEvent.organizer.ja"></span>
+                    </div>
+                </div>
+                
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <button 
+                        class="btn-register"
+                        :class="{ 'disabled': selectedEvent.spotsLeft === 0, 'registered': selectedEvent.isRegistered }"
+                        :disabled="selectedEvent.spotsLeft === 0 && !selectedEvent.isRegistered"
+                        @click="toggleRegistration(selectedEvent)">
+                        <template x-if="selectedEvent.isRegistered">
+                            <span class="btn-content">
+                                <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span x-text="language === 'ja' ? '参加予定・キャンセル' : 'Registered - Cancel'"></span>
+                            </span>
+                        </template>
+                        <template x-if="!selectedEvent.isRegistered && selectedEvent.spotsLeft > 0">
+                            <span class="btn-content">
+                                <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <span x-text="language === 'ja' ? '参加申込' : 'Register'"></span>
+                            </span>
+                        </template>
+                        <template x-if="!selectedEvent.isRegistered && selectedEvent.spotsLeft === 0">
+                            <span class="btn-content">
+                                <span x-text="language === 'ja' ? '満席です' : 'Full'"></span>
+                            </span>
+                        </template>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+
+<script>
+function eventsPage() {
+    return {
+        filter: 'all',
+        selectedEvent: null,
+        language: window.CoopApp?.language || 'ja',
+        
+        // Sample events data (replace with your actual data source)
+        events: [
+            {
+                id: 1,
+                title: { ja: '親子料理教室', en: 'Parent-child cooking class' },
+                description: { ja: '季節の野菜を使った簡単レシピを親子で作りましょう。', en: 'Learn to make simple recipes using seasonal vegetables with your children.' },
+                category: { ja: '料理', en: 'Cooking' },
+                date: '2024-12-15',
+                time: '10:00',
+                endTime: '12:00',
+                location: { ja: '練馬センター', en: 'Nerima Center' },
+                organizer: { ja: '食育委員会', en: 'Food Education Committee' },
+                capacity: 20,
+                registered: 15,
+                spotsLeft: 5,
+                fee: 500,
+                isFree: false,
+                isRegistered: false,
+                featured: true
+            },
+            {
+                id: 2,
+                title: { ja: '年末大掃除ワークショップ', en: 'Year-end cleaning workshop' },
+                description: { ja: 'エコな洗剤の作り方と効率的な掃除のコツを学びます。', en: 'Learn how to make eco-friendly cleaners and efficient cleaning tips.' },
+                category: { ja: 'ワークショップ', en: 'Workshop' },
+                date: '2024-12-20',
+                time: '14:00',
+                endTime: '16:00',
+                location: { ja: 'オンライン', en: 'Online' },
+                organizer: { ja: '環境委員会', en: 'Environment Committee' },
+                capacity: 50,
+                registered: 30,
+                spotsLeft: 20,
+                fee: 0,
+                isFree: true,
+                isRegistered: true,
+                featured: false
+            },
+            {
+                id: 3,
+                title: { ja: '新年会', en: 'New Year Party' },
+                description: { ja: '組合員の皆様と新年をお祝いしましょう。', en: 'Celebrate the new year with fellow co-op members.' },
+                category: { ja: '交流会', en: 'Social' },
+                date: '2025-01-10',
+                time: '18:00',
+                endTime: '20:00',
+                location: { ja: '板橋センター', en: 'Itabashi Center' },
+                organizer: { ja: '北東京生協', en: 'North Tokyo COOP' },
+                capacity: 100,
+                registered: 45,
+                spotsLeft: 55,
+                fee: 2000,
+                isFree: false,
+                isRegistered: false,
+                featured: false
+            },
+            {
+                id: 4,
+                title: { ja: '味噌作り体験', en: 'Miso making experience' },
+                description: { ja: '国産大豆を使った本格味噌づくりを体験できます。', en: 'Experience authentic miso making using domestic soybeans.' },
+                category: { ja: '体験', en: 'Experience' },
+                date: '2025-01-25',
+                time: '10:00',
+                endTime: '14:00',
+                location: { ja: '北センター', en: 'North Center' },
+                organizer: { ja: '食品委員会', en: 'Food Committee' },
+                capacity: 15,
+                registered: 15,
+                spotsLeft: 0,
+                fee: 1500,
+                isFree: false,
+                isRegistered: false,
+                featured: false
+            },
+            {
+                id: 5,
+                title: { ja: '子育てサロン', en: 'Parenting Salon' },
+                description: { ja: '子育ての悩みを共有し、情報交換しましょう。', en: 'Share parenting concerns and exchange information.' },
+                category: { ja: '子育て', en: 'Parenting' },
+                date: '2025-02-05',
+                time: '10:30',
+                endTime: '12:00',
+                location: { ja: '練馬センター', en: 'Nerima Center' },
+                organizer: { ja: '子育て支援委員会', en: 'Parenting Support Committee' },
+                capacity: 12,
+                registered: 8,
+                spotsLeft: 4,
+                fee: 0,
+                isFree: true,
+                isRegistered: false,
+                featured: false
+            }
+        ],
+        
+        get featuredEvent() {
+            return this.events.find(e => e.featured);
+        },
+        
+        get filteredEvents() {
+            let result = this.events.filter(e => !e.featured);
+            if (this.filter === 'upcoming') {
+                result = result.filter(e => new Date(e.date) >= new Date());
+            } else if (this.filter === 'registered') {
+                result = result.filter(e => e.isRegistered);
+            }
+            return result.sort((a, b) => new Date(a.date) - new Date(b.date));
+        },
+        
+        get groupedEvents() {
+            const groups = {};
+            this.filteredEvents.forEach(event => {
+                const date = new Date(event.date);
+                const monthKey = date.toLocaleDateString(this.language === 'ja' ? 'ja-JP' : 'en-US', { year: 'numeric', month: 'long' });
+                if (!groups[monthKey]) {
+                    groups[monthKey] = [];
+                }
+                groups[monthKey].push(event);
+            });
+            return groups;
+        },
+        
+        formatMonth(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString(this.language === 'ja' ? 'ja-JP' : 'en-US', { month: 'short' });
+        },
+        
+        formatDay(dateStr) {
+            return new Date(dateStr).getDate();
+        },
+        
+        formatWeekday(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString(this.language === 'ja' ? 'ja-JP' : 'en-US', { weekday: 'short' });
+        },
+        
+        formatFullDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString(this.language === 'ja' ? 'ja-JP' : 'en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                weekday: 'short'
+            });
+        },
+        
+        openEventDetail(event) {
+            this.selectedEvent = event;
+        },
+        
+        toggleRegistration(event) {
+            event.isRegistered = !event.isRegistered;
+            if (event.isRegistered) {
+                event.registered++;
+                event.spotsLeft--;
+            } else {
+                event.registered--;
+                event.spotsLeft++;
+            }
+        },
+        
+        init() {
+            // Sync language with global app if available
+            if (window.CoopApp) {
+                this.language = window.CoopApp.language;
+            }
+        }
+    }
+}
+</script>
+
+<style>
+/* Events Page Specific Styles */
+.events-page {
+    padding-bottom: 100px;
+}
+
+/* Page Header */
+.page-header {
+    padding: 20px 16px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-bottom: 1px solid rgba(134, 189, 94, 0.2);
+}
+
+.page-header-content {
+    margin-bottom: 16px;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0 0 4px 0;
+}
+
+.page-subtitle {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* Filter Tabs */
+.filter-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.filter-tab {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    background: white;
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.filter-tab:hover {
+    background: #f9fafb;
+}
+
+.filter-tab.active {
+    background: #86bd5e;
+    color: white;
+    box-shadow: 0 2px 8px rgba(134, 189, 94, 0.3);
+}
+
+/* Featured Event Banner */
+.featured-event-banner {
+    margin: 16px;
+    padding: 20px;
+    background: linear-gradient(135deg, #86bd5e 0%, #6b9c4e 100%);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(134, 189, 94, 0.3);
+}
+
+.featured-event-banner:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(134, 189, 94, 0.4);
+}
+
+.featured-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 12px;
+}
+
+.featured-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.featured-date {
+    text-align: center;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    min-width: 60px;
+}
+
+.featured-month {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    text-transform: uppercase;
+}
+
+.featured-day {
+    display: block;
+    font-size: 28px;
+    font-weight: 800;
+    color: white;
+    line-height: 1;
+}
+
+.featured-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.featured-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 6px 0;
+}
+
+.featured-location {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0 0 8px 0;
+}
+
+.featured-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+}
+
+.featured-time {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.featured-spots {
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    color: white;
+}
+
+.featured-spots.full {
+    background: rgba(239, 68, 68, 0.3);
+}
+
+.featured-arrow {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.featured-arrow svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Events List */
+.events-list {
+    padding: 0 16px;
+}
+
+/* Month Group */
+.events-month-group {
+    margin-bottom: 24px;
+}
+
+.month-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-top: 8px;
+}
+
+.month-indicator {
+    width: 4px;
+    height: 24px;
+    background: linear-gradient(180deg, #86bd5e, #6b9c4e);
+    border-radius: 2px;
+}
+
+.month-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #374151;
+    margin: 0;
+}
+
+/* Event Cards */
+.events-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.event-card {
+    display: flex;
+    align-items: stretch;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.04);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.event-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.event-card:active {
+    transform: scale(0.98);
+}
+
+.event-card-registered {
+    border-left: 4px solid #86bd5e;
+}
+
+/* Event Date Badge */
+.event-date-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    min-width: 70px;
+    border-right: 1px solid rgba(134, 189, 94, 0.1);
+}
+
+.event-date-badge.registered {
+    background: linear-gradient(135deg, #86bd5e, #6b9c4e);
+}
+
+.event-date-badge.registered .event-date-month,
+.event-date-badge.registered .event-date-day,
+.event-date-badge.registered .event-date-weekday {
+    color: white;
+}
+
+.event-date-month {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b9c4e;
+    text-transform: uppercase;
+}
+
+.event-date-day {
+    font-size: 26px;
+    font-weight: 800;
+    color: #166534;
+    line-height: 1.1;
+}
+
+.event-date-weekday {
+    font-size: 10px;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+/* Event Info */
+.event-info {
+    flex: 1;
+    padding: 14px;
+    min-width: 0;
+}
+
+.event-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.event-category {
+    padding: 3px 10px;
+    background: #f3f4f6;
+    color: #4b5563;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
+.event-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
+.event-tag.registered {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.event-tag.free {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.event-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+}
+
+.event-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.event-detail {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.event-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.event-capacity {
+    flex: 1;
+    min-width: 0;
+}
+
+.capacity-bar {
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.capacity-fill {
+    height: 100%;
+    background: #86bd5e;
+    border-radius: 2px;
+    transition: width 0.3s;
+}
+
+.capacity-fill.full {
+    background: #ef4444;
+}
+
+.capacity-text {
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.capacity-text.full {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+.event-fee {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.event-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    color: #d1d5db;
+}
+
+.event-arrow svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background: #f3f4f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-icon svg {
+    width: 40px;
+    height: 40px;
+    color: #9ca3af;
+}
+
+.empty-state h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #374151;
+    margin: 0 0 8px 0;
+}
+
+.empty-state p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0;
+}
+
+@media (min-width: 640px) {
+    .modal-overlay {
+        align-items: center;
+        padding: 20px;
+    }
+}
+
+.modal-content {
+    background: white;
+    border-radius: 24px 24px 0 0;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease-out;
+}
+
+@media (min-width: 640px) {
+    .modal-content {
+        border-radius: 24px;
+        max-width: 480px;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.modal-category {
+    display: inline-block;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    color: #166534;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.modal-close {
+    padding: 8px;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.modal-close:hover {
+    background: #e5e7eb;
+}
+
+.modal-close svg {
+    width: 20px;
+    height: 20px;
+    color: #6b7280;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-description {
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 0 0 20px 0;
+}
+
+/* Detail Grid */
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.detail-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.detail-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.detail-icon.blue {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: #3b82f6;
+}
+
+.detail-icon.green {
+    background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+    color: #16a34a;
+}
+
+.detail-icon.purple {
+    background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+    color: #9333ea;
+}
+
+.detail-icon.yellow {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #d97706;
+}
+
+.detail-text {
+    flex: 1;
+}
+
+.detail-label {
+    display: block;
+    font-size: 11px;
+    color: #9ca3af;
+    margin-bottom: 2px;
+}
+
+.detail-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.detail-status {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    font-size: 11px;
+    border-radius: 10px;
+}
+
+.detail-status.available {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.detail-status.full {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Organizer */
+.organizer-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #f9fafb;
+    border-radius: 12px;
+}
+
+.organizer-label {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.organizer-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Modal Footer */
+.modal-footer {
+    padding: 16px 20px 24px;
+    border-top: 1px solid #f3f4f6;
+}
+
+.btn-register {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: linear-gradient(135deg, #86bd5e, #6b9c4e);
+    color: white;
+    box-shadow: 0 4px 12px rgba(134, 189, 94, 0.3);
+}
+
+.btn-register:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(134, 189, 94, 0.4);
+}
+
+.btn-register.registered {
+    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    color: #374151;
+    box-shadow: none;
+}
+
+.btn-register.disabled {
+    background: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Icon utilities */
+.icon-xs {
+    width: 12px;
+    height: 12px;
+}
+
+.icon-sm {
+    width: 16px;
+    height: 16px;
+}
+</style>

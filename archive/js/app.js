@@ -35,6 +35,28 @@
         this.updateLanguageToggle();
         this.updateAllText();
       }
+      
+      // Restore session from localStorage
+      const savedSession = localStorage.getItem('coop-session');
+      if (savedSession) {
+        try {
+          const session = JSON.parse(savedSession);
+          if (session.role) {
+            this.state.currentRole = session.role;
+            this.state.isLoggedIn = true;
+            
+            // Add classes to body
+            document.body.classList.add('logged-in');
+            document.body.classList.add('role-' + session.role);
+            
+            // Update user display
+            this.updateUserDisplay();
+          }
+        } catch (e) {
+          console.error('[App] Failed to restore session:', e);
+          localStorage.removeItem('coop-session');
+        }
+      }
     },
 
     // Cache frequently used DOM elements
@@ -127,6 +149,26 @@
       });
     },
 
+    // Time-based greeting
+    getTimeGreeting() {
+        const hour = new Date().getHours();
+        if (this.language === 'ja') {
+            if (hour < 12) return 'おはようございます';
+            if (hour < 18) return 'こんにちは';
+            return 'こんばんは';
+        } else {
+            if (hour < 12) return 'Good morning';
+            if (hour < 18) return 'Good afternoon';
+            return 'Good evening';
+        }
+    },
+
+    // Notification count (customize based on your data)
+    getNotificationCount() {
+        // Return count of items needing attention
+        return 3; // Example value
+    },
+
     // ============================================
     // Role Selection & Login
     // ============================================
@@ -149,6 +191,13 @@
       
       this.state.isLoggedIn = true;
       
+      // Store session in localStorage for other components (e.g., decisions.js)
+      const session = {
+        role: this.state.currentRole,
+        loggedInAt: new Date().toISOString()
+      };
+      localStorage.setItem('coop-session', JSON.stringify(session));
+      
       // Add classes to body
       document.body.classList.add('logged-in');
       document.body.classList.remove('role-reijikai', 'role-shokuin', 'role-volunteer');
@@ -166,6 +215,9 @@
       
       this.state.isLoggedIn = false;
       this.state.currentRole = null;
+      
+      // Remove session from localStorage
+      localStorage.removeItem('coop-session');
       
       // Remove classes from body
       document.body.classList.remove('logged-in', 'role-reijikai', 'role-shokuin', 'role-volunteer');
@@ -316,6 +368,8 @@
         }
       });
     },
+
+    
 
     // ============================================
     // Content Rendering

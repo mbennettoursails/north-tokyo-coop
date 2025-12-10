@@ -2,385 +2,2321 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <meta name="theme-color" content="#86bd5e">
-    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#16a34a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="CO-OP Hub">
-    <meta name="description" content="North Tokyo COOP Hub - Community Platform for 36,000 members">
-    
     <title>北東京CO-OP Hub</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     
-    <!-- Application Styles -->
-    <link rel="stylesheet" href="css/app.css">
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            overscroll-behavior: none;
+        }
+        
+        /* Hide all views by default */
+        .view {
+            display: none;
+        }
+        
+        .view.active {
+            display: block;
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Main app container - accounts for bottom nav */
+        .app-container {
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 12px;
+            min-width: 64px;
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.15s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            position: relative;
+        }
+        
+        .nav-item:active {
+            background-color: #f3f4f6;
+            border-radius: 12px;
+        }
+        
+        .nav-item.active {
+            color: #16a34a;
+        }
+        
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+        }
+        
+        .nav-item span {
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .nav-badge {
+            position: absolute;
+            top: 2px;
+            right: 12px;
+            background: #dc2626;
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            min-width: 16px;
+            height: 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+        }
+        
+        /* More Menu Overlay */
+        .more-menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+        }
+        
+        .more-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .more-menu {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            z-index: 201;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+        
+        .more-menu-overlay.active .more-menu {
+            transform: translateY(0);
+        }
+        
+        .more-menu-handle {
+            width: 40px;
+            height: 4px;
+            background: #d1d5db;
+            border-radius: 2px;
+            margin: 12px auto;
+        }
+        
+        .more-menu-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            color: #374151;
+            text-decoration: none;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.15s;
+        }
+        
+        .more-menu-item:active {
+            background-color: #f3f4f6;
+        }
+        
+        .more-menu-item svg {
+            width: 24px;
+            height: 24px;
+            margin-right: 16px;
+            color: #6b7280;
+        }
+        
+        .more-menu-divider {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 8px 20px;
+        }
+        
+        /* Header */
+        .app-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            z-index: 50;
+            padding: 12px 16px;
+        }
+        
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .card-interactive {
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        
+        .card-interactive:active {
+            transform: scale(0.98);
+        }
+        
+        /* Role badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 9999px;
+        }
+        
+        .badge-reijikai {
+            background: #f3e8ff;
+            color: #7c3aed;
+            border: 1px solid #c4b5fd;
+        }
+        
+        .badge-shokuin {
+            background: #dbeafe;
+            color: #2563eb;
+            border: 1px solid #93c5fd;
+        }
+        
+        .badge-volunteer {
+            background: #dcfce7;
+            color: #16a34a;
+            border: 1px solid #86efac;
+        }
+        
+        /* Touch-friendly buttons */
+        .btn {
+            min-height: 48px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: #16a34a;
+            color: white;
+        }
+        
+        .btn-primary:active {
+            background: #15803d;
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .btn-secondary:active {
+            background: #e5e7eb;
+        }
+        
+        /* Stats grid */
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        /* Role selection cards - compact for mobile */
+        .role-card-compact {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .role-card-compact:active {
+            transform: scale(0.98);
+        }
+        
+        .role-card-compact.selected {
+            border-color: #16a34a;
+            background: #f0fdf4;
+        }
+        
+        .role-card-compact[data-role="reijikai"].selected {
+            border-color: #7c3aed;
+            background: #faf5ff;
+        }
+        
+        .role-card-compact[data-role="shokuin"].selected {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+        
+        /* Quick action cards */
+        .action-card {
+            background: linear-gradient(135deg, var(--from), var(--to));
+            border-radius: 16px;
+            padding: 16px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        
+        .action-card:active {
+            transform: scale(0.98);
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.2s;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+        
+        /* Hide elements based on role */
+        body:not([data-role="reijikai"]) .reijikai-only {
+            display: none !important;
+        }
+        
+        body:not([data-role="shokuin"]) .shokuin-only {
+            display: none !important;
+        }
+        
+        body:not([data-role="volunteer"]) .volunteer-only {
+            display: none !important;
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 2px;
+        }
+        
+        /* Form inputs */
+        .input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        
+        .input:focus {
+            outline: none;
+            border-color: #16a34a;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
+        
+        /* Request/Offer cards */
+        .request-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 12px;
+        }
+        
+        .request-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 8px;
+            margin-right: 8px;
+        }
+        
+        .request-badge.urgent {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .request-badge.normal {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+        
+        /* Tab navigation */
+        .tabs {
+            display: flex;
+            background: #f3f4f6;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 16px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #111827;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        /* Vote buttons */
+        .vote-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 500;
+            border: 2px solid;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .vote-btn.yes {
+            border-color: #16a34a;
+            color: #16a34a;
+        }
+        
+        .vote-btn.yes:active, .vote-btn.yes.selected {
+            background: #16a34a;
+            color: white;
+        }
+        
+        .vote-btn.no {
+            border-color: #dc2626;
+            color: #dc2626;
+        }
+        
+        .vote-btn.no:active, .vote-btn.no.selected {
+            background: #dc2626;
+            color: white;
+        }
+        
+        .vote-btn.abstain {
+            border-color: #6b7280;
+            color: #6b7280;
+        }
+        
+        .vote-btn.abstain:active, .vote-btn.abstain.selected {
+            background: #6b7280;
+            color: white;
+        }
+        
+        /* News card with compact color stripe */
+        .news-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        
+        .news-card-stripe {
+            height: 6px;
+            width: 100%;
+        }
+        
+        .news-card-content {
+            padding: 16px;
+        }
+        
+        /* Calendar styles */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            text-align: center;
+        }
+        
+        .calendar-header {
+            font-size: 11px;
+            font-weight: 500;
+            color: #6b7280;
+            padding: 8px 0;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .calendar-day:hover {
+            background: #f3f4f6;
+        }
+        
+        .calendar-day.today {
+            background: #16a34a;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .calendar-day.has-event {
+            position: relative;
+        }
+        
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            width: 4px;
+            height: 4px;
+            background: #16a34a;
+            border-radius: 50%;
+        }
+        
+        .calendar-day.has-event.today::after {
+            background: white;
+        }
+        
+        .calendar-day.other-month {
+            color: #d1d5db;
+        }
+        
+        /* Profile section card */
+        .profile-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        
+        .profile-section-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        
+        .profile-section-item:active {
+            background: #f9fafb;
+        }
+        
+        .profile-section-item:not(:last-child) {
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .profile-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 14px;
+            flex-shrink: 0;
+        }
+        
+        .profile-section-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .profile-section-title {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 2px;
+        }
+        
+        .profile-section-desc {
+            font-size: 13px;
+            color: #6b7280;
+        }
+        
+        .profile-section-chevron {
+            color: #9ca3af;
+            flex-shrink: 0;
+        }
+        
+        /* Filter pills */
+        .filter-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .filter-pill {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .filter-pill.active {
+            background: #16a34a;
+            color: white;
+        }
+        
+        .filter-pill:not(.active) {
+            background: #f3f4f6;
+            color: #374151;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-gray-50">
 
-    <!-- ============================================
-         LOGIN PAGE
-         ============================================ -->
-    <div class="login-page">
-        <div class="login-logo">🤝</div>
-        <h1 class="login-title" data-ja="北東京CO-OP Hub" data-en="North Tokyo COOP Hub">北東京CO-OP Hub</h1>
-        <p class="login-subtitle" data-ja="コミュニティプラットフォーム" data-en="Community Platform">コミュニティプラットフォーム</p>
-        
-        <div class="login-card">
-            <div class="qr-placeholder">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3 11h2v2H3v-2zm8-6h2v4h-2V5zm-2 6h4v4h-2v-2H9v-2zm6 0h2v2h2v2h-2v2h-2v-2h-2v-2h2v-2zm4 2h2v4h-2v-4zM5 3h4v4H5V3zm2 2v0H7zm-2 8h4v4H5v-4zm2 2v0zm8-12h4v4h-4V3zm2 2v0zM3 3h2v2H3V3zm18 0h2v2h-2V3zm0 18h2v2h-2v-2zM3 21h2v2H3v-2z"/>
-                </svg>
-            </div>
-            <p class="login-prompt" data-ja="QRコードをスキャンしてログイン" data-en="Scan QR code to login">QRコードをスキャンしてログイン</p>
+    <!-- ========================================
+         LOGIN VIEW - Compact Mobile Design
+         ======================================== -->
+    <div id="view-login" class="view active">
+        <div class="min-h-screen flex flex-col p-5 bg-gradient-to-br from-green-50 via-white to-blue-50">
             
-            <div class="demo-section">
-                <p class="demo-label" data-ja="デモモード：役割を選択" data-en="Demo: Select a role">デモモード：役割を選択</p>
-                
-                <div class="role-selector">
-                    <button class="role-btn" data-role="reijikai" onclick="CoopApp.selectRole('reijikai')">
-                        <div class="role-btn-icon">👔</div>
-                        <div class="role-btn-label" data-ja="委員会" data-en="Committee">委員会</div>
-                    </button>
-                    <button class="role-btn" data-role="shokuin" onclick="CoopApp.selectRole('shokuin')">
-                        <div class="role-btn-icon">💼</div>
-                        <div class="role-btn-label" data-ja="職員" data-en="Staff">職員</div>
-                    </button>
-                    <button class="role-btn" data-role="volunteer" onclick="CoopApp.selectRole('volunteer')">
-                        <div class="role-btn-icon">🤝</div>
-                        <div class="role-btn-label" data-ja="ボランティア" data-en="Volunteer">ボランティア</div>
-                    </button>
-                </div>
-                
-                <button class="login-btn" id="loginBtn" onclick="CoopApp.login()" data-ja="デモログイン" data-en="Demo Login">デモログイン</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================
-         MAIN APPLICATION
-         ============================================ -->
-    <div class="app-container">
-        
-        <!-- Header -->
-        <header class="app-header">
-            <div class="header-left">
-                <div class="header-logo">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Compact Logo -->
+            <div class="text-center pt-6 pb-4">
+                <div class="w-20 h-20 mx-auto mb-4 bg-green-600 rounded-full flex items-center justify-center shadow-lg">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                     </svg>
                 </div>
-                <h1 class="header-title" data-ja="北東京CO-OP Hub" data-en="North Tokyo COOP">北東京CO-OP Hub</h1>
+                <h1 class="text-2xl font-bold text-gray-800 mb-1">北東京CO-OP Hub</h1>
+                <p class="text-sm text-gray-500">コミュニティプラットフォーム</p>
             </div>
-            <div class="lang-toggle">
-                <span id="langJa" class="active">JP</span>
-                <button class="lang-btn" id="langToggle" onclick="CoopApp.toggleLanguage()"></button>
-                <span id="langEn">EN</span>
+            
+            <!-- QR Scan Area - Compact -->
+            <div class="card p-4 mb-4">
+                <div class="flex items-center justify-center space-x-4 py-4">
+                    <div class="w-20 h-20 bg-gray-100 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                        </svg>
+                    </div>
+                    <div class="text-left">
+                        <p class="font-medium text-gray-800">QRコードでログイン</p>
+                        <p class="text-xs text-gray-500">会員カードをスキャン</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Divider -->
+            <div class="relative mb-4">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-200"></div>
+                </div>
+                <div class="relative flex justify-center">
+                    <span class="px-3 bg-gradient-to-br from-green-50 via-white to-blue-50 text-sm text-gray-500">デモ用</span>
+                </div>
+            </div>
+            
+            <!-- Role Selection - Compact List -->
+            <div class="space-y-3 flex-1">
+                <p class="text-sm font-medium text-gray-600 mb-2">役割を選択してログイン</p>
+                
+                <div class="role-card-compact" data-role="reijikai" onclick="selectRole('reijikai')">
+                    <div class="text-2xl">👔</div>
+                    <div class="flex-1">
+                        <p class="font-bold text-gray-800 text-sm">委員会</p>
+                        <p class="text-xs text-gray-500">意思決定者</p>
+                    </div>
+                    <span class="badge badge-reijikai text-xs">Reijikai</span>
+                </div>
+                
+                <div class="role-card-compact" data-role="shokuin" onclick="selectRole('shokuin')">
+                    <div class="text-2xl">💼</div>
+                    <div class="flex-1">
+                        <p class="font-bold text-gray-800 text-sm">職員</p>
+                        <p class="text-xs text-gray-500">コンテンツ管理者</p>
+                    </div>
+                    <span class="badge badge-shokuin text-xs">Shokuin</span>
+                </div>
+                
+                <div class="role-card-compact" data-role="volunteer" onclick="selectRole('volunteer')">
+                    <div class="text-2xl">🤝</div>
+                    <div class="flex-1">
+                        <p class="font-bold text-gray-800 text-sm">ボランティア</p>
+                        <p class="text-xs text-gray-500">一般メンバー</p>
+                    </div>
+                    <span class="badge badge-volunteer text-xs">Volunteer</span>
+                </div>
+            </div>
+            
+            <!-- Login Button -->
+            <div class="pt-4 pb-2">
+                <button id="login-btn" class="btn btn-primary w-full text-lg" onclick="login()" disabled>
+                    ログイン
+                </button>
+                <p class="text-xs text-center text-gray-400 mt-3">36,000人の会員のための共創の場</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         MAIN APP CONTAINER
+         ======================================== -->
+    <div id="app-container" class="app-container" style="display: none;">
+        
+        <!-- Header -->
+        <header class="app-header">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-gray-800">北東京CO-OP</h1>
+                        <p class="text-xs text-gray-500" id="header-role-badge"></p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center" onclick="showNotifications()">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
+                    </button>
+                    <div id="user-avatar" class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center cursor-pointer" onclick="navigate('profile')">
+                        <span class="text-green-600 font-bold text-sm" id="avatar-initial">田</span>
+                    </div>
+                </div>
             </div>
         </header>
-        
-        <!-- Main Content -->
-        <main class="main-content">
-            
-            <!-- Dashboard Page -->
-            <div class="page active" id="page-dashboard">
-                <div class="card welcome-card mb-4">
-                    <div class="avatar" id="userAvatar">🤝</div>
-                    <div class="welcome-info">
-                        <div class="welcome-label" data-ja="こんにちは" data-en="Welcome">こんにちは</div>
-                        <div class="welcome-name" id="userName">ゲスト</div>
-                    </div>
-                    <span class="badge badge-volunteer" id="userRoleBadge">ボランティア</span>
-                </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value">3</div>
-                        <div class="stat-label" data-ja="アクティブな依頼" data-en="Active Requests">アクティブな依頼</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value blue">5</div>
-                        <div class="stat-label" data-ja="今後のイベント" data-en="Upcoming Events">今後のイベント</div>
+
+        <!-- ========================================
+             DASHBOARD VIEW
+             ======================================== -->
+        <div id="view-dashboard" class="view active">
+            <div class="p-4">
+                <!-- Welcome Card -->
+                <div class="card p-4 mb-4 bg-gradient-to-r from-green-500 to-green-600 text-white">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-green-100 text-sm">こんにちは</p>
+                            <h2 class="text-xl font-bold" id="welcome-name">田中さん</h2>
+                        </div>
+                        <span id="dashboard-role-badge" class="badge"></span>
                     </div>
                 </div>
                 
-                <div class="card p-4">
-                    <h3 class="page-title" style="font-size: 16px;" data-ja="クイックアクション" data-en="Quick Actions">クイックアクション</h3>
-                    <button class="quick-action" data-action="community" onclick="CoopApp.navigateTo('community')">
-                        <span class="quick-action-icon">🤝</span>
-                        <div class="quick-action-text">
-                            <h4 data-ja="助けを求める" data-en="Request Help">助けを求める</h4>
-                            <p data-ja="コミュニティに依頼を投稿" data-en="Post to community board">コミュニティに依頼を投稿</p>
-                        </div>
-                    </button>
-                    <button class="quick-action" data-action="events" onclick="CoopApp.navigateTo('events')">
-                        <span class="quick-action-icon">📅</span>
-                        <div class="quick-action-text">
-                            <h4 data-ja="イベントを見る" data-en="Browse Events">イベントを見る</h4>
-                            <p data-ja="参加登録" data-en="Register to participate">参加登録</p>
-                        </div>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- News Page -->
-            <div class="page" id="page-news">
-                <h2 class="page-title" data-ja="ニュース" data-en="News">ニュース</h2>
-                <div class="card p-4" id="newsContainer">
-                    <!-- Rendered by JS -->
-                </div>
-            </div>
-            
-            <!-- Community Page -->
-            <div class="page" id="page-community">
-                <h2 class="page-title" data-ja="コミュニティ" data-en="Community">コミュニティ</h2>
-                <div class="card placeholder">
-                    <div class="placeholder-icon">🤝</div>
-                    <p class="placeholder-text" data-ja="コミュニティ助け合い機能で、メンバー同士がサポートし合えます。" data-en="Community mutual aid allows members to support each other.">コミュニティ助け合い機能で、メンバー同士がサポートし合えます。</p>
-                </div>
-            </div>
-            
-            <!-- Events Page -->
-            <div class="page" id="page-events">
-                <h2 class="page-title" data-ja="イベント" data-en="Events">イベント</h2>
-                <div class="card p-4" id="eventsContainer">
-                    <!-- Rendered by JS -->
-                </div>
-            </div>
-            
-            <!-- Knowledge Page -->
-            <div class="page" id="page-knowledge">
-                <h2 class="page-title" data-ja="知識倉庫" data-en="Knowledge Base">知識倉庫</h2>
-                <div class="card placeholder">
-                    <div class="placeholder-icon">📚</div>
-                    <p class="placeholder-text" data-ja="FAQ、ガイド、レシピなどの情報を検索できます。" data-en="Search FAQs, guides, recipes and more.">FAQ、ガイド、レシピなどの情報を検索できます。</p>
-                </div>
-            </div>
-            
-            <!-- Profile Page -->
-            <div class="page" id="page-profile">
-                <h2 class="page-title" data-ja="プロフィール" data-en="Profile">プロフィール</h2>
-                <div class="card p-4">
-                    <div class="welcome-card" style="padding: 0; margin-bottom: 16px;">
-                        <div class="avatar avatar-lg" id="profileAvatar">🤝</div>
-                        <div class="welcome-info">
-                            <div class="welcome-name" id="profileName">ゲスト</div>
-                            <div class="welcome-label">NT-12345</div>
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="stat-value">5</p>
+                                <p class="stat-label">助け合い依頼</p>
+                            </div>
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                    <div style="border-top: 1px solid #eee; padding-top: 16px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #666;" data-ja="地域" data-en="Area">地域</span>
-                            <span style="font-weight: 500;">練馬区</span>
+                    
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="stat-value">3</p>
+                                <p class="stat-label">今後のイベント</p>
+                            </div>
+                            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
                         </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: #666;" data-ja="役割" data-en="Role">役割</span>
-                            <span class="badge badge-volunteer" id="profileRoleBadge">ボランティア</span>
+                    </div>
+                    
+                    <!-- Reijikai-only stat -->
+                    <div class="stat-card reijikai-only">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="stat-value">2</p>
+                                <p class="stat-label">投票待ち提案</p>
+                            </div>
+                            <div class="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Shokuin-only stat -->
+                    <div class="stat-card shokuin-only">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="stat-value">8</p>
+                                <p class="stat-label">承認待ち</p>
+                            </div>
+                            <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Volunteer-only stat -->
+                    <div class="stat-card volunteer-only">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="stat-value">12</p>
+                                <p class="stat-label">提供した助け</p>
+                            </div>
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <h3 class="font-bold text-gray-800 mb-3">クイックアクション</h3>
+                
+                <!-- Reijikai Actions -->
+                <div class="grid grid-cols-2 gap-3 mb-4 reijikai-only">
+                    <div class="action-card" style="--from: #7c3aed; --to: #6d28d9;" onclick="navigate('decisions')">
+                        <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <p class="font-semibold">提案を作成</p>
+                        <p class="text-xs text-purple-200">新しい提案を投稿</p>
+                    </div>
+                    <div class="action-card" style="--from: #8b5cf6; --to: #7c3aed;" onclick="navigate('decisions')">
+                        <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        <p class="font-semibold">投票結果</p>
+                        <p class="text-xs text-purple-200">統計とデータ</p>
+                    </div>
+                </div>
+                
+                <!-- Shokuin Actions -->
+                <div class="grid grid-cols-2 gap-3 mb-4 shokuin-only">
+                    <div class="action-card" style="--from: #2563eb; --to: #1d4ed8;" onclick="navigate('content')">
+                        <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                        <p class="font-semibold">ニュースを投稿</p>
+                        <p class="text-xs text-blue-200">新しい記事を公開</p>
+                    </div>
+                    <div class="action-card" style="--from: #0891b2; --to: #0e7490;" onclick="navigate('events')">
+                        <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="font-semibold">イベント管理</p>
+                        <p class="text-xs text-cyan-200">イベントを作成・編集</p>
+                    </div>
+                </div>
+                
+                <!-- Volunteer Actions -->
+                <div class="grid grid-cols-2 gap-3 mb-4 volunteer-only">
+                    <div class="action-card" style="--from: #16a34a; --to: #15803d;" onclick="navigate('community')">
+                        <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <p class="font-semibold">助けを求める</p>
+                        <p class="text-xs text-green-200">コミュニティに依頼</p>
+                    </div>
+                    <div class="action-card" style="--from: #059669; --to: #047857;" onclick="navigate('events')">
+                        <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="font-semibold">イベントを見る</p>
+                        <p class="text-xs text-green-200">参加登録</p>
+                    </div>
+                </div>
+                
+                <!-- Recent News -->
+                <h3 class="font-bold text-gray-800 mb-3">最新ニュース</h3>
+                <div class="space-y-3">
+                    <div class="news-card card-interactive" onclick="navigate('news')">
+                        <div class="news-card-stripe bg-green-500"></div>
+                        <div class="news-card-content">
+                            <div class="flex items-start justify-between mb-2">
+                                <span class="request-badge normal">お知らせ</span>
+                                <span class="text-xs text-gray-500">2時間前</span>
+                            </div>
+                            <h4 class="font-semibold text-gray-800 mb-1">年末年始の配送スケジュールについて</h4>
+                            <p class="text-sm text-gray-600 line-clamp-2">12月28日〜1月4日までの配送スケジュール変更のお知らせです。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="news-card card-interactive" onclick="navigate('news')">
+                        <div class="news-card-stripe bg-orange-500"></div>
+                        <div class="news-card-content">
+                            <div class="flex items-start justify-between mb-2">
+                                <span class="request-badge" style="background: #fef3c7; color: #d97706;">イベント</span>
+                                <span class="text-xs text-gray-500">昨日</span>
+                            </div>
+                            <h4 class="font-semibold text-gray-800 mb-1">新春もちつき大会のご案内</h4>
+                            <p class="text-sm text-gray-600 line-clamp-2">1月15日（日）に開催される新春もちつき大会の参加者を募集中...</p>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Decisions Page (Reijikai) -->
-            <div class="page" id="page-decisions">
-                <h2 class="page-title" data-ja="意思決定" data-en="Decisions">意思決定</h2>
-                <div class="card placeholder">
-                    <div class="placeholder-icon">🗳️</div>
-                    <p class="placeholder-text" data-ja="提案の作成と投票ができます。" data-en="Create proposals and vote on decisions.">提案の作成と投票ができます。</p>
+        </div>
+
+        <!-- ========================================
+             NEWS VIEW - Enhanced with Compact Headers
+             ======================================== -->
+        <div id="view-news" class="view">
+            <div class="p-4">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">ニュース</h2>
+                
+                <!-- Category Filter -->
+                <div class="filter-pills mb-4">
+                    <button class="filter-pill active" onclick="filterNews(this, 'all')">すべて</button>
+                    <button class="filter-pill" onclick="filterNews(this, 'notice')">お知らせ</button>
+                    <button class="filter-pill" onclick="filterNews(this, 'event')">イベント</button>
+                    <button class="filter-pill" onclick="filterNews(this, 'recipe')">レシピ</button>
+                    <button class="filter-pill" onclick="filterNews(this, 'local')">地域</button>
+                    <button class="filter-pill" onclick="filterNews(this, 'product')">商品</button>
+                </div>
+                
+                <!-- News List with Compact Color Stripes -->
+                <div class="space-y-3">
+                    <!-- Notice -->
+                    <div class="news-card card-interactive">
+                        <div class="news-card-stripe bg-green-500"></div>
+                        <div class="news-card-content">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="request-badge normal">お知らせ</span>
+                                <span class="text-xs text-gray-500">2024年12月10日</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">年末年始の配送スケジュールについて</h3>
+                            <p class="text-sm text-gray-600 mb-3">12月28日〜1月4日までの配送スケジュール変更のお知らせです。この期間中は通常と異なるスケジュールで配送を行います。</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span>👁 234人が閲覧</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Event -->
+                    <div class="news-card card-interactive">
+                        <div class="news-card-stripe bg-orange-500"></div>
+                        <div class="news-card-content">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="request-badge" style="background: #fef3c7; color: #d97706;">イベント</span>
+                                <span class="text-xs text-gray-500">2024年12月9日</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">新春もちつき大会のご案内</h3>
+                            <p class="text-sm text-gray-600 mb-3">1月15日（日）に開催される新春もちつき大会の参加者を募集しています。ご家族でのご参加も大歓迎です。</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span>👁 189人が閲覧</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recipe -->
+                    <div class="news-card card-interactive">
+                        <div class="news-card-stripe bg-yellow-500"></div>
+                        <div class="news-card-content">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="request-badge" style="background: #fef9c3; color: #ca8a04;">レシピ</span>
+                                <span class="text-xs text-gray-500">2024年12月8日</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">冬野菜たっぷりポトフのレシピ</h3>
+                            <p class="text-sm text-gray-600 mb-3">今週届く冬野菜を使った、体が温まるポトフのレシピをご紹介します。</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span>👁 156人が閲覧</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Local -->
+                    <div class="news-card card-interactive">
+                        <div class="news-card-stripe bg-blue-500"></div>
+                        <div class="news-card-content">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="request-badge" style="background: #dbeafe; color: #2563eb;">地域</span>
+                                <span class="text-xs text-gray-500">2024年12月7日</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">練馬区センター 年末大掃除ボランティア募集</h3>
+                            <p class="text-sm text-gray-600 mb-3">12月23日（土）に練馬区センターの大掃除を行います。ご協力いただける方を募集しています。</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span>👁 98人が閲覧</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product -->
+                    <div class="news-card card-interactive">
+                        <div class="news-card-stripe bg-pink-500"></div>
+                        <div class="news-card-content">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="request-badge" style="background: #fce7f3; color: #db2777;">商品</span>
+                                <span class="text-xs text-gray-500">2024年12月6日</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">新商品：有機栽培いちご「あまおう」入荷</h3>
+                            <p class="text-sm text-gray-600 mb-3">福岡県産の有機栽培いちご「あまおう」が今週から注文可能になりました。</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span>👁 312人が閲覧</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notice 2 -->
+                    <div class="news-card card-interactive">
+                        <div class="news-card-stripe bg-green-500"></div>
+                        <div class="news-card-content">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="request-badge normal">お知らせ</span>
+                                <span class="text-xs text-gray-500">2024年12月5日</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">2025年度 会費改定のお知らせ</h3>
+                            <p class="text-sm text-gray-600 mb-3">来年度より会費が改定されます。詳細は添付資料をご確認ください。</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span>👁 445人が閲覧</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recipe 2 -->
+                    <div class="news-card card-interactive">
+                        <div class="news-card-stripe bg-yellow-500"></div>
+                        <div class="news-card-content">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="request-badge" style="background: #fef9c3; color: #ca8a04;">レシピ</span>
+                                <span class="text-xs text-gray-500">2024年12月4日</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">簡単！白菜と豚肉のミルフィーユ鍋</h3>
+                            <p class="text-sm text-gray-600 mb-3">CO-OPの新鮮白菜を使った、見た目も美しいミルフィーユ鍋のレシピです。</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span>👁 278人が閲覧</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <!-- Admin Page (Shokuin) -->
-            <div class="page" id="page-admin">
-                <h2 class="page-title" data-ja="コンテンツ管理" data-en="Content Management">コンテンツ管理</h2>
-                <div class="card placeholder">
-                    <div class="placeholder-icon">📝</div>
-                    <p class="placeholder-text" data-ja="ニュース、イベント、ナレッジベースを管理できます。" data-en="Manage news, events, and knowledge base.">ニュース、イベント、ナレッジベースを管理できます。</p>
+        </div>
+
+        <!-- ========================================
+             COMMUNITY VIEW
+             ======================================== -->
+        <div id="view-community" class="view">
+            <div class="p-4">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">コミュニティ助け合い</h2>
+                
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab active" onclick="switchCommunityTab(this, 'requests')">依頼一覧</button>
+                    <button class="tab" onclick="switchCommunityTab(this, 'offers')">提供一覧</button>
+                    <button class="tab" onclick="switchCommunityTab(this, 'my')">マイ投稿</button>
+                </div>
+                
+                <!-- Create Request Button -->
+                <button class="btn btn-primary w-full mb-4" onclick="showModal('request-modal')">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    助けを求める / 提供する
+                </button>
+                
+                <!-- Requests Tab Content -->
+                <div id="community-requests" class="space-y-3">
+                    <div class="request-card card-interactive">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-2xl">👶</span>
+                                <span class="request-badge urgent">緊急</span>
+                            </div>
+                            <span class="text-xs text-gray-500">2時間前</span>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-1">12月15日（日）午後のベビーシッター</h4>
+                        <p class="text-sm text-gray-600 mb-3">14:00〜18:00まで、2歳の子供を見ていただける方を探しています。</p>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500">練馬区 • 田中さん</span>
+                            <div class="flex items-center space-x-3 text-gray-500">
+                                <span>👁 12</span>
+                                <span>💬 3</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="request-card card-interactive">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-2xl">🚗</span>
+                                <span class="request-badge normal">通常</span>
+                            </div>
+                            <span class="text-xs text-gray-500">5時間前</span>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-1">病院への送迎をお願いしたい</h4>
+                        <p class="text-sm text-gray-600 mb-3">来週水曜日、練馬駅から病院まで送っていただける方を探しています。</p>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500">練馬区 • 山田さん</span>
+                            <div class="flex items-center space-x-3 text-gray-500">
+                                <span>👁 8</span>
+                                <span>💬 1</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="request-card card-interactive">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-2xl">🛒</span>
+                                <span class="request-badge normal">通常</span>
+                            </div>
+                            <span class="text-xs text-gray-500">昨日</span>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-1">買い物代行をお願いしたい</h4>
+                        <p class="text-sm text-gray-600 mb-3">足を怪我してしまい、スーパーへの買い物を代わりにお願いできる方を探しています。</p>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500">豊島区 • 佐藤さん</span>
+                            <div class="flex items-center space-x-3 text-gray-500">
+                                <span>👁 15</span>
+                                <span>💬 5</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Offers Tab Content -->
+                <div id="community-offers" class="space-y-3" style="display: none;">
+                    <div class="request-card card-interactive">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-2xl">📚</span>
+                                <span class="request-badge" style="background: #dbeafe; color: #2563eb;">提供</span>
+                            </div>
+                            <span class="text-xs text-gray-500">3時間前</span>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-1">小学生の宿題サポートできます</h4>
+                        <p class="text-sm text-gray-600 mb-3">平日夕方、小学生のお子様の宿題を見ることができます。元教員です。</p>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500">板橋区 • 鈴木さん</span>
+                            <div class="flex items-center space-x-3 text-gray-500">
+                                <span>👁 20</span>
+                                <span>💬 4</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="request-card card-interactive">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-2xl">🐕</span>
+                                <span class="request-badge" style="background: #dbeafe; color: #2563eb;">提供</span>
+                            </div>
+                            <span class="text-xs text-gray-500">1日前</span>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-1">犬の散歩代行できます</h4>
+                        <p class="text-sm text-gray-600 mb-3">毎朝7時頃、近所の公園で散歩しています。一緒に散歩できます。</p>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500">練馬区 • 高橋さん</span>
+                            <div class="flex items-center space-x-3 text-gray-500">
+                                <span>👁 18</span>
+                                <span>💬 2</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- My Posts Tab Content -->
+                <div id="community-my" class="space-y-3" style="display: none;">
+                    <div class="text-center py-8 text-gray-500">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <p>まだ投稿がありません</p>
+                        <p class="text-sm mt-2">上のボタンから投稿を作成してください</p>
+                    </div>
                 </div>
             </div>
-            
-        </main>
-        
-        <!-- ============================================
+        </div>
+
+        <!-- ========================================
+             EVENTS VIEW - Enhanced with Calendar
+             ======================================== -->
+        <div id="view-events" class="view">
+            <div class="p-4">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">イベント</h2>
+                
+                <!-- Calendar Card -->
+                <div class="card p-4 mb-4">
+                    <!-- Month Navigation -->
+                    <div class="flex items-center justify-between mb-4">
+                        <button class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center" onclick="changeMonth(-1)">
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                        <h3 class="text-lg font-bold text-gray-800" id="calendar-month">2024年12月</h3>
+                        <button class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center" onclick="changeMonth(1)">
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Calendar Grid -->
+                    <div class="calendar-grid">
+                        <div class="calendar-header">日</div>
+                        <div class="calendar-header">月</div>
+                        <div class="calendar-header">火</div>
+                        <div class="calendar-header">水</div>
+                        <div class="calendar-header">木</div>
+                        <div class="calendar-header">金</div>
+                        <div class="calendar-header">土</div>
+                        
+                        <!-- Week 1 -->
+                        <div class="calendar-day other-month">24</div>
+                        <div class="calendar-day other-month">25</div>
+                        <div class="calendar-day other-month">26</div>
+                        <div class="calendar-day other-month">27</div>
+                        <div class="calendar-day other-month">28</div>
+                        <div class="calendar-day other-month">29</div>
+                        <div class="calendar-day other-month">30</div>
+                        
+                        <!-- Week 2 -->
+                        <div class="calendar-day">1</div>
+                        <div class="calendar-day">2</div>
+                        <div class="calendar-day">3</div>
+                        <div class="calendar-day">4</div>
+                        <div class="calendar-day">5</div>
+                        <div class="calendar-day">6</div>
+                        <div class="calendar-day has-event">7</div>
+                        
+                        <!-- Week 3 -->
+                        <div class="calendar-day has-event">8</div>
+                        <div class="calendar-day">9</div>
+                        <div class="calendar-day today">10</div>
+                        <div class="calendar-day">11</div>
+                        <div class="calendar-day">12</div>
+                        <div class="calendar-day">13</div>
+                        <div class="calendar-day has-event">14</div>
+                        
+                        <!-- Week 4 -->
+                        <div class="calendar-day has-event">15</div>
+                        <div class="calendar-day">16</div>
+                        <div class="calendar-day">17</div>
+                        <div class="calendar-day">18</div>
+                        <div class="calendar-day">19</div>
+                        <div class="calendar-day has-event">20</div>
+                        <div class="calendar-day">21</div>
+                        
+                        <!-- Week 5 -->
+                        <div class="calendar-day">22</div>
+                        <div class="calendar-day has-event">23</div>
+                        <div class="calendar-day">24</div>
+                        <div class="calendar-day">25</div>
+                        <div class="calendar-day">26</div>
+                        <div class="calendar-day">27</div>
+                        <div class="calendar-day">28</div>
+                        
+                        <!-- Week 6 -->
+                        <div class="calendar-day">29</div>
+                        <div class="calendar-day">30</div>
+                        <div class="calendar-day">31</div>
+                        <div class="calendar-day other-month">1</div>
+                        <div class="calendar-day other-month">2</div>
+                        <div class="calendar-day other-month">3</div>
+                        <div class="calendar-day other-month">4</div>
+                    </div>
+                </div>
+                
+                <!-- Events List -->
+                <h3 class="font-bold text-gray-800 mb-3">今後のイベント</h3>
+                <div class="space-y-3">
+                    <div class="card p-4 card-interactive">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-14 h-14 bg-red-100 rounded-xl flex flex-col items-center justify-center flex-shrink-0">
+                                <span class="text-xs text-red-600 font-medium">12月</span>
+                                <span class="text-xl font-bold text-red-700">7</span>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-800 mb-1">親子クリスマス会</h4>
+                                <p class="text-sm text-gray-600 mb-2">板橋区民センター • 13:00〜16:00</p>
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-xs text-gray-500">👥 28/40人参加</span>
+                                    <span class="badge badge-volunteer text-xs">参加受付中</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-4 card-interactive">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-14 h-14 bg-blue-100 rounded-xl flex flex-col items-center justify-center flex-shrink-0">
+                                <span class="text-xs text-blue-600 font-medium">12月</span>
+                                <span class="text-xl font-bold text-blue-700">8</span>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-800 mb-1">防災講習会</h4>
+                                <p class="text-sm text-gray-600 mb-2">豊島区防災センター • 10:00〜12:00</p>
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-xs text-gray-500">👥 15/30人参加</span>
+                                    <span class="badge badge-volunteer text-xs">参加受付中</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-4 card-interactive">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-14 h-14 bg-purple-100 rounded-xl flex flex-col items-center justify-center flex-shrink-0">
+                                <span class="text-xs text-purple-600 font-medium">12月</span>
+                                <span class="text-xl font-bold text-purple-700">14</span>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-800 mb-1">手作り味噌ワークショップ</h4>
+                                <p class="text-sm text-gray-600 mb-2">CO-OPキッチンスタジオ • 10:00〜13:00</p>
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-xs text-gray-500">👥 12/15人参加</span>
+                                    <span class="badge" style="background: #fef3c7; color: #d97706; font-size: 12px;">残りわずか</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-4 card-interactive">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-14 h-14 bg-green-100 rounded-xl flex flex-col items-center justify-center flex-shrink-0">
+                                <span class="text-xs text-green-600 font-medium">12月</span>
+                                <span class="text-xl font-bold text-green-700">15</span>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-800 mb-1">新春もちつき大会</h4>
+                                <p class="text-sm text-gray-600 mb-2">練馬区民センター • 10:00〜14:00</p>
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-xs text-gray-500">👥 32/50人参加</span>
+                                    <span class="badge badge-volunteer text-xs">参加受付中</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-4 card-interactive">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-14 h-14 bg-cyan-100 rounded-xl flex flex-col items-center justify-center flex-shrink-0">
+                                <span class="text-xs text-cyan-600 font-medium">12月</span>
+                                <span class="text-xl font-bold text-cyan-700">20</span>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-800 mb-1">冬の料理教室</h4>
+                                <p class="text-sm text-gray-600 mb-2">CO-OPキッチンスタジオ • 14:00〜16:00</p>
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-xs text-gray-500">👥 18/20人参加</span>
+                                    <span class="badge" style="background: #fef3c7; color: #d97706; font-size: 12px;">残りわずか</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-4 card-interactive">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-14 h-14 bg-orange-100 rounded-xl flex flex-col items-center justify-center flex-shrink-0">
+                                <span class="text-xs text-orange-600 font-medium">12月</span>
+                                <span class="text-xl font-bold text-orange-700">23</span>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-800 mb-1">年末大掃除ボランティア</h4>
+                                <p class="text-sm text-gray-600 mb-2">練馬区センター • 9:00〜12:00</p>
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-xs text-gray-500">👥 8/20人参加</span>
+                                    <span class="badge badge-volunteer text-xs">参加受付中</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- January Events -->
+                    <h4 class="font-bold text-gray-600 mt-6 mb-3">2025年1月</h4>
+                    
+                    <div class="card p-4 card-interactive">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-14 h-14 bg-indigo-100 rounded-xl flex flex-col items-center justify-center flex-shrink-0">
+                                <span class="text-xs text-indigo-600 font-medium">1月</span>
+                                <span class="text-xl font-bold text-indigo-700">8</span>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-800 mb-1">新年交流会</h4>
+                                <p class="text-sm text-gray-600 mb-2">豊島区コミュニティホール • 13:00〜16:00</p>
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-xs text-gray-500">👥 45/100人参加</span>
+                                    <span class="badge badge-volunteer text-xs">参加受付中</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-4 card-interactive">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-14 h-14 bg-rose-100 rounded-xl flex flex-col items-center justify-center flex-shrink-0">
+                                <span class="text-xs text-rose-600 font-medium">1月</span>
+                                <span class="text-xl font-bold text-rose-700">18</span>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-800 mb-1">子育てサポーター研修会</h4>
+                                <p class="text-sm text-gray-600 mb-2">練馬区センター • 10:00〜15:00</p>
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-xs text-gray-500">👥 5/25人参加</span>
+                                    <span class="badge badge-volunteer text-xs">参加受付中</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================
+             KNOWLEDGE VIEW
+             ======================================== -->
+        <div id="view-knowledge" class="view">
+            <div class="p-4">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">知識倉庫</h2>
+                
+                <!-- Search -->
+                <div class="relative mb-4">
+                    <svg class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" class="input pl-12" placeholder="キーワードで検索...">
+                </div>
+                
+                <!-- Categories -->
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="card p-4 card-interactive">
+                        <div class="text-3xl mb-2">❓</div>
+                        <h4 class="font-semibold text-gray-800">よくある質問</h4>
+                        <p class="text-sm text-gray-500">32件</p>
+                    </div>
+                    <div class="card p-4 card-interactive">
+                        <div class="text-3xl mb-2">🍳</div>
+                        <h4 class="font-semibold text-gray-800">レシピ集</h4>
+                        <p class="text-sm text-gray-500">128件</p>
+                    </div>
+                    <div class="card p-4 card-interactive">
+                        <div class="text-3xl mb-2">📋</div>
+                        <h4 class="font-semibold text-gray-800">利用ガイド</h4>
+                        <p class="text-sm text-gray-500">15件</p>
+                    </div>
+                    <div class="card p-4 card-interactive">
+                        <div class="text-3xl mb-2">📜</div>
+                        <h4 class="font-semibold text-gray-800">規約・ポリシー</h4>
+                        <p class="text-sm text-gray-500">8件</p>
+                    </div>
+                </div>
+                
+                <!-- Popular Articles -->
+                <h3 class="font-bold text-gray-800 mb-3">人気の記事</h3>
+                <div class="space-y-3">
+                    <div class="card p-4 card-interactive">
+                        <h4 class="font-semibold text-gray-800 mb-1">配送日の変更方法</h4>
+                        <p class="text-sm text-gray-600">配送日を変更したい場合の手順を説明します...</p>
+                    </div>
+                    <div class="card p-4 card-interactive">
+                        <h4 class="font-semibold text-gray-800 mb-1">ルンルンポイントの使い方</h4>
+                        <p class="text-sm text-gray-600">貯まったポイントの確認方法と使い方...</p>
+                    </div>
+                    <div class="card p-4 card-interactive">
+                        <h4 class="font-semibold text-gray-800 mb-1">退会・休止の手続き</h4>
+                        <p class="text-sm text-gray-600">一時休止や退会をご希望の場合...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================
+             DECISIONS VIEW (Reijikai Only)
+             ======================================== -->
+        <div id="view-decisions" class="view reijikai-only">
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold text-gray-800">意思決定</h2>
+                    <button class="btn btn-primary py-2 px-4" onclick="showModal('proposal-modal')">
+                        + 新規提案
+                    </button>
+                </div>
+                
+                <!-- Stats -->
+                <div class="grid grid-cols-3 gap-3 mb-4">
+                    <div class="stat-card text-center">
+                        <p class="stat-value text-xl">2</p>
+                        <p class="stat-label text-xs">投票中</p>
+                    </div>
+                    <div class="stat-card text-center">
+                        <p class="stat-value text-xl">78%</p>
+                        <p class="stat-label text-xs">参加率</p>
+                    </div>
+                    <div class="stat-card text-center">
+                        <p class="stat-value text-xl">5</p>
+                        <p class="stat-label text-xs">今月完了</p>
+                    </div>
+                </div>
+                
+                <!-- Active Proposals -->
+                <h3 class="font-bold text-gray-800 mb-3">投票中の提案</h3>
+                <div class="space-y-3">
+                    <div class="card p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <span class="badge badge-reijikai text-xs">方針</span>
+                            <span class="text-xs text-gray-500">残り3日</span>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">2025年度の活動方針について</h4>
+                        <p class="text-sm text-gray-600 mb-4">来年度の重点活動項目として、地域コミュニティ強化を提案します。</p>
+                        
+                        <!-- Vote Progress -->
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-600">投票状況</span>
+                                <span class="text-gray-800 font-medium">24/30 (80%)</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-green-500 rounded-full" style="width: 80%"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Vote Buttons -->
+                        <div class="flex space-x-2">
+                            <button class="vote-btn yes">賛成</button>
+                            <button class="vote-btn no">反対</button>
+                            <button class="vote-btn abstain">棄権</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <span class="badge" style="background: #fef3c7; color: #d97706; font-size: 12px;">予算</span>
+                            <span class="text-xs text-gray-500">残り5日</span>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">コミュニティスペース改修予算</h4>
+                        <p class="text-sm text-gray-600 mb-4">練馬センターのコミュニティスペース改修に50万円の予算を提案します。</p>
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-600">投票状況</span>
+                                <span class="text-gray-800 font-medium">18/30 (60%)</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-green-500 rounded-full" style="width: 60%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-2">
+                            <button class="vote-btn yes">賛成</button>
+                            <button class="vote-btn no">反対</button>
+                            <button class="vote-btn abstain">棄権</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================
+             CONTENT MANAGEMENT VIEW (Shokuin Only)
+             ======================================== -->
+        <div id="view-content" class="view shokuin-only">
+            <div class="p-4">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">コンテンツ管理</h2>
+                
+                <div class="tabs">
+                    <button class="tab active">ニュース</button>
+                    <button class="tab">イベント</button>
+                    <button class="tab">知識倉庫</button>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-3 mb-4">
+                    <div class="stat-card text-center">
+                        <p class="stat-value text-xl">47</p>
+                        <p class="stat-label text-xs">総投稿数</p>
+                    </div>
+                    <div class="stat-card text-center">
+                        <p class="stat-value text-xl">12</p>
+                        <p class="stat-label text-xs">今月</p>
+                    </div>
+                    <div class="stat-card text-center">
+                        <p class="stat-value text-xl">1.2k</p>
+                        <p class="stat-label text-xs">平均閲覧</p>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary w-full mb-4">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    新規投稿を作成
+                </button>
+                
+                <h3 class="font-bold text-gray-800 mb-3">最近の投稿</h3>
+                <div class="space-y-3">
+                    <div class="card p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <span class="request-badge normal">公開中</span>
+                            <div class="flex space-x-2">
+                                <button class="text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-1">年末年始の配送スケジュール</h4>
+                        <p class="text-sm text-gray-500">2024年12月10日 • 234回閲覧</p>
+                    </div>
+                    
+                    <div class="card p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <span class="request-badge" style="background: #fef3c7; color: #d97706;">下書き</span>
+                            <div class="flex space-x-2">
+                                <button class="text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-1">1月の新商品紹介</h4>
+                        <p class="text-sm text-gray-500">下書き保存 • 2024年12月9日</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================
+             PROFILE VIEW - Enhanced Sections
+             ======================================== -->
+        <div id="view-profile" class="view">
+            <div class="p-4">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">プロフィール</h2>
+                
+                <!-- Profile Header Card -->
+                <div class="card p-6 mb-4 text-center">
+                    <div class="w-24 h-24 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4 ring-4 ring-green-50">
+                        <span class="text-4xl font-bold text-green-600" id="profile-avatar">田</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1" id="profile-name">田中 花子</h3>
+                    <p class="text-sm text-gray-500 mb-3">会員番号: <span id="profile-member-number">NT-12345</span></p>
+                    <span id="profile-role-badge" class="badge"></span>
+                </div>
+                
+                <!-- Basic Info Section -->
+                <div class="profile-section">
+                    <div class="profile-section-item" onclick="showModal('basic-info-modal')">
+                        <div class="profile-icon bg-blue-100">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </div>
+                        <div class="profile-section-content">
+                            <p class="profile-section-title">基本情報</p>
+                            <p class="profile-section-desc">名前、連絡先、住所など</p>
+                        </div>
+                        <svg class="w-5 h-5 profile-section-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Support Services Section -->
+                <div class="profile-section">
+                    <div class="profile-section-item" onclick="showModal('services-modal')">
+                        <div class="profile-icon bg-green-100">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="profile-section-content">
+                            <p class="profile-section-title">提供できるサポート</p>
+                            <p class="profile-section-desc">育児、送迎、買い物代行など</p>
+                        </div>
+                        <svg class="w-5 h-5 profile-section-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                    
+                    <div class="profile-section-item" onclick="showModal('needs-modal')">
+                        <div class="profile-icon bg-orange-100">
+                            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="profile-section-content">
+                            <p class="profile-section-title">必要なサポート</p>
+                            <p class="profile-section-desc">サポートを受けたいカテゴリ</p>
+                        </div>
+                        <svg class="w-5 h-5 profile-section-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Availability Section -->
+                <div class="profile-section">
+                    <div class="profile-section-item" onclick="showModal('availability-modal')">
+                        <div class="profile-icon bg-purple-100">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="profile-section-content">
+                            <p class="profile-section-title">対応可能な時間</p>
+                            <p class="profile-section-desc">週間スケジュール設定</p>
+                        </div>
+                        <svg class="w-5 h-5 profile-section-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Privacy Section -->
+                <div class="profile-section">
+                    <div class="profile-section-item" onclick="showModal('privacy-modal')">
+                        <div class="profile-icon bg-red-100">
+                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <div class="profile-section-content">
+                            <p class="profile-section-title">プライバシー設定</p>
+                            <p class="profile-section-desc">公開範囲・表示名の管理</p>
+                        </div>
+                        <svg class="w-5 h-5 profile-section-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Activity & Points Section -->
+                <div class="profile-section">
+                    <div class="profile-section-item">
+                        <div class="profile-icon bg-yellow-100">
+                            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                            </svg>
+                        </div>
+                        <div class="profile-section-content">
+                            <p class="profile-section-title">ルンルンポイント</p>
+                            <p class="profile-section-desc">残高: 1,250 ポイント</p>
+                        </div>
+                        <svg class="w-5 h-5 profile-section-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                    
+                    <div class="profile-section-item">
+                        <div class="profile-icon bg-cyan-100">
+                            <svg class="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <div class="profile-section-content">
+                            <p class="profile-section-title">活動履歴</p>
+                            <p class="profile-section-desc">助け合い活動の履歴</p>
+                        </div>
+                        <svg class="w-5 h-5 profile-section-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Notification Settings -->
+                <div class="profile-section">
+                    <div class="profile-section-item">
+                        <div class="profile-icon bg-indigo-100">
+                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                            </svg>
+                        </div>
+                        <div class="profile-section-content">
+                            <p class="profile-section-title">通知設定</p>
+                            <p class="profile-section-desc">メール・プッシュ通知</p>
+                        </div>
+                        <svg class="w-5 h-5 profile-section-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================
              BOTTOM NAVIGATION
-             ============================================ -->
+             ======================================== -->
         <nav class="bottom-nav">
-            <button class="bottom-nav-item active" data-page="dashboard" onclick="CoopApp.navigateTo('dashboard')">
+            <button class="nav-item active" onclick="navigate('dashboard')" data-view="dashboard">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                 </svg>
-                <span data-ja="ホーム" data-en="Home">ホーム</span>
+                <span>ホーム</span>
             </button>
-            <button class="bottom-nav-item" data-page="news" onclick="CoopApp.navigateTo('news')">
+            
+            <button class="nav-item" onclick="navigate('news')" data-view="news">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
                 </svg>
-                <span data-ja="ニュース" data-en="News">ニュース</span>
+                <span>ニュース</span>
+                <span class="nav-badge">3</span>
             </button>
-            <button class="bottom-nav-item" data-page="community" onclick="CoopApp.navigateTo('community')">
+            
+            <button class="nav-item" onclick="navigate('community')" data-view="community">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                 </svg>
-                <span data-ja="コミュニティ" data-en="Community">コミュニティ</span>
+                <span>助け合い</span>
+                <span class="nav-badge">5</span>
             </button>
-            <button class="bottom-nav-item" data-page="events" onclick="CoopApp.navigateTo('events')">
+            
+            <button class="nav-item" onclick="navigate('events')" data-view="events">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                 </svg>
-                <span data-ja="イベント" data-en="Events">イベント</span>
+                <span>イベント</span>
             </button>
-            <button class="bottom-nav-item" id="moreBtn" onclick="CoopApp.openMoreMenu()">
+            
+            <button class="nav-item" onclick="toggleMoreMenu()">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
-                <span data-ja="その他" data-en="More">その他</span>
+                <span>その他</span>
             </button>
         </nav>
-        
-        <!-- ============================================
-             MORE MENU
-             ============================================ -->
-        <div class="more-menu-overlay" id="moreOverlay" onclick="CoopApp.closeMoreMenu()"></div>
-        
-        <div class="more-menu-drawer" id="moreDrawer">
-            <div class="drawer-handle"></div>
-            
-            <!-- User Header -->
-            <div class="drawer-header">
-                <div class="drawer-avatar" id="drawerAvatar">🤝</div>
-                <div class="drawer-user-info">
-                    <div class="drawer-user-name" id="drawerName">ゲスト</div>
-                    <div class="drawer-user-id">NT-12345</div>
-                </div>
-                <span class="badge badge-volunteer" id="drawerRoleBadge">ボランティア</span>
-            </div>
-            
-            <!-- Menu Items -->
-            <div class="drawer-menu">
-                <!-- Knowledge -->
-                <button class="menu-item" data-page="knowledge" onclick="CoopApp.navigateFromMenu('knowledge')">
-                    <div class="menu-icon yellow">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
-                    </div>
-                    <span class="menu-label" data-ja="知識倉庫" data-en="Knowledge">知識倉庫</span>
-                    <div class="menu-chevron">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </div>
+
+        <!-- ========================================
+             MORE MENU OVERLAY
+             ======================================== -->
+        <div id="more-menu-overlay" class="more-menu-overlay" onclick="toggleMoreMenu()">
+            <div class="more-menu" onclick="event.stopPropagation()">
+                <div class="more-menu-handle"></div>
+                
+                <button class="more-menu-item" onclick="navigate('knowledge'); toggleMoreMenu();">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    知識倉庫
                 </button>
                 
-                <!-- Profile -->
-                <button class="menu-item" data-page="profile" onclick="CoopApp.navigateFromMenu('profile')">
-                    <div class="menu-icon green">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                    </div>
-                    <span class="menu-label" data-ja="プロフィール" data-en="Profile">プロフィール</span>
-                    <div class="menu-chevron">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </div>
+                <button class="more-menu-item" onclick="navigate('profile'); toggleMoreMenu();">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    マイプロフィール
                 </button>
                 
-                <!-- Decisions (Reijikai only) -->
-                <button class="menu-item reijikai-only" data-page="decisions" onclick="CoopApp.navigateFromMenu('decisions')">
-                    <div class="menu-icon purple">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                        </svg>
-                    </div>
-                    <span class="menu-label" data-ja="意思決定" data-en="Decisions">意思決定</span>
-                    <span class="menu-badge">2</span>
-                    <div class="menu-chevron">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </div>
+                <!-- Reijikai Only -->
+                <button class="more-menu-item reijikai-only" onclick="navigate('decisions'); toggleMoreMenu();">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                    </svg>
+                    意思決定
                 </button>
                 
-                <!-- Content Management (Shokuin + Reijikai) -->
-                <button class="menu-item shokuin-only" data-page="admin" onclick="CoopApp.navigateFromMenu('admin')">
-                    <div class="menu-icon blue">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                        </svg>
-                    </div>
-                    <span class="menu-label" data-ja="コンテンツ管理" data-en="Content">コンテンツ管理</span>
-                    <div class="menu-chevron">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </div>
+                <!-- Shokuin Only -->
+                <button class="more-menu-item shokuin-only" onclick="navigate('content'); toggleMoreMenu();">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                    コンテンツ管理
                 </button>
                 
-                <div class="menu-divider"></div>
+                <div class="more-menu-divider"></div>
                 
-                <!-- Shop -->
-                <a href="https://shop.seikatsuclub.coop" target="_blank" class="menu-item">
-                    <div class="menu-icon orange">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                        </svg>
-                    </div>
-                    <span class="menu-label" data-ja="商品注文" data-en="Shop">商品注文</span>
-                    <div class="menu-chevron">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                        </svg>
-                    </div>
-                </a>
-                
-                <!-- Settings -->
-                <button class="menu-item">
-                    <div class="menu-icon gray">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                    </div>
-                    <span class="menu-label" data-ja="設定" data-en="Settings">設定</span>
-                    <div class="menu-chevron">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </div>
+                <button class="more-menu-item" onclick="window.open('https://seikatsuclub.coop/', '_blank')">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                    商品注文
+                    <svg class="w-4 h-4 ml-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
                 </button>
                 
-                <div class="menu-divider"></div>
-                
-                <!-- Logout -->
-                <button class="menu-item danger" id="logoutBtn" onclick="CoopApp.logout()">
-                    <div class="menu-icon red">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                        </svg>
-                    </div>
-                    <span class="menu-label" data-ja="ログアウト" data-en="Logout">ログアウト</span>
+                <button class="more-menu-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    設定
                 </button>
-            </div>
-            
-            <!-- Footer -->
-            <div class="drawer-footer">
-                北東京CO-OP Hub v1.0.0
+                
+                <div class="more-menu-divider"></div>
+                
+                <button class="more-menu-item text-red-600" onclick="logout()">
+                    <svg class="text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    ログアウト
+                </button>
             </div>
         </div>
-        
     </div>
 
-    <!-- ============================================
-         SCRIPTS (Load order matters!)
-         ============================================ -->
-    <script src="js/i18n.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/app.js"></script>
+    <!-- ========================================
+         REQUEST MODAL
+         ======================================== -->
+    <div id="request-modal" class="modal-overlay" onclick="hideModal('request-modal')">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">助け合い投稿</h3>
+                    <button onclick="hideModal('request-modal')" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">種類</label>
+                        <div class="flex space-x-2">
+                            <button class="flex-1 btn btn-primary py-3">助けを求める</button>
+                            <button class="flex-1 btn btn-secondary py-3">助けを提供</button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">カテゴリー</label>
+                        <select class="input">
+                            <option>選択してください</option>
+                            <option>👶 育児サポート</option>
+                            <option>🚗 送迎・ライドシェア</option>
+                            <option>🛒 買い物代行</option>
+                            <option>📦 配達サポート</option>
+                            <option>🏠 家事サポート</option>
+                            <option>📚 学習支援</option>
+                            <option>🐕 ペットケア</option>
+                            <option>👴 高齢者支援</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">タイトル</label>
+                        <input type="text" class="input" placeholder="例：12月15日のベビーシッター">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">詳細</label>
+                        <textarea class="input" rows="4" placeholder="詳しい内容を入力してください..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex space-x-3">
+                    <button class="flex-1 btn btn-secondary" onclick="hideModal('request-modal')">キャンセル</button>
+                    <button class="flex-1 btn btn-primary" onclick="hideModal('request-modal'); showConfirmation('投稿しました');">投稿する</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- ========================================
+         PROPOSAL MODAL
+         ======================================== -->
+    <div id="proposal-modal" class="modal-overlay" onclick="hideModal('proposal-modal')">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">新規提案</h3>
+                    <button onclick="hideModal('proposal-modal')" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">カテゴリー</label>
+                        <select class="input">
+                            <option>方針・ポリシー</option>
+                            <option>予算</option>
+                            <option>イベント</option>
+                            <option>その他</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">タイトル</label>
+                        <input type="text" class="input" placeholder="提案のタイトルを入力...">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">詳細説明</label>
+                        <textarea class="input" rows="4" placeholder="提案の詳細を説明してください..."></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">投票期限</label>
+                        <input type="date" class="input">
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex space-x-3">
+                    <button class="flex-1 btn btn-secondary" onclick="hideModal('proposal-modal')">キャンセル</button>
+                    <button class="flex-1 btn btn-primary" onclick="hideModal('proposal-modal'); showConfirmation('提案を公開しました');">公開する</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         CONFIRMATION TOAST
+         ======================================== -->
+    <div id="confirmation-toast" class="fixed top-4 left-4 right-4 bg-green-600 text-white p-4 rounded-xl shadow-lg transform -translate-y-full opacity-0 transition-all duration-300" style="z-index: 400;">
+        <div class="flex items-center space-x-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span id="confirmation-message">完了しました</span>
+        </div>
+    </div>
+
+    <!-- ========================================
+         JAVASCRIPT
+         ======================================== -->
+    <script>
+        // ============================================
+        // Application State
+        // ============================================
+        const App = {
+            state: {
+                isLoggedIn: false,
+                currentView: 'dashboard',
+                userRole: null,
+                selectedRole: null
+            },
+            
+            users: {
+                reijikai: {
+                    name: '田中 花子',
+                    memberNumber: 'NT-12345',
+                    avatar: '田'
+                },
+                shokuin: {
+                    name: '鈴木 太郎',
+                    memberNumber: 'NT-00123',
+                    avatar: '鈴'
+                },
+                volunteer: {
+                    name: '山田 美咲',
+                    memberNumber: 'NT-54321',
+                    avatar: '山'
+                }
+            },
+            
+            roleBadges: {
+                reijikai: { text: '委員会', class: 'badge-reijikai' },
+                shokuin: { text: '職員', class: 'badge-shokuin' },
+                volunteer: { text: 'ボランティア', class: 'badge-volunteer' }
+            }
+        };
+
+        // ============================================
+        // Role Selection
+        // ============================================
+        function selectRole(role) {
+            App.state.selectedRole = role;
+            
+            document.querySelectorAll('.role-card-compact').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            const selectedCard = document.querySelector(`.role-card-compact[data-role="${role}"]`);
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+            
+            document.getElementById('login-btn').disabled = false;
+        }
+
+        // ============================================
+        // Login
+        // ============================================
+        function login() {
+            if (!App.state.selectedRole) return;
+            
+            App.state.isLoggedIn = true;
+            App.state.userRole = App.state.selectedRole;
+            
+            document.body.setAttribute('data-role', App.state.userRole);
+            
+            const user = App.users[App.state.userRole];
+            const badge = App.roleBadges[App.state.userRole];
+            
+            // Header
+            document.getElementById('header-role-badge').textContent = badge.text;
+            document.getElementById('avatar-initial').textContent = user.avatar;
+            
+            // Dashboard
+            document.getElementById('welcome-name').textContent = user.name + 'さん';
+            const dashboardBadge = document.getElementById('dashboard-role-badge');
+            dashboardBadge.textContent = badge.text;
+            dashboardBadge.className = 'badge ' + badge.class;
+            
+            // Profile
+            document.getElementById('profile-avatar').textContent = user.avatar;
+            document.getElementById('profile-name').textContent = user.name;
+            document.getElementById('profile-member-number').textContent = user.memberNumber;
+            const profileBadge = document.getElementById('profile-role-badge');
+            profileBadge.textContent = badge.text;
+            profileBadge.className = 'badge ' + badge.class;
+            
+            // Switch views
+            document.getElementById('view-login').classList.remove('active');
+            document.getElementById('app-container').style.display = 'block';
+            document.getElementById('view-dashboard').classList.add('active');
+        }
+
+        // ============================================
+        // Logout
+        // ============================================
+        function logout() {
+            App.state.isLoggedIn = false;
+            App.state.userRole = null;
+            App.state.selectedRole = null;
+            App.state.currentView = 'dashboard';
+            
+            document.body.removeAttribute('data-role');
+            
+            document.querySelectorAll('.role-card-compact').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.getElementById('login-btn').disabled = true;
+            
+            document.getElementById('more-menu-overlay').classList.remove('active');
+            
+            document.getElementById('app-container').style.display = 'none';
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+            document.getElementById('view-login').classList.add('active');
+        }
+
+        // ============================================
+        // Navigation
+        // ============================================
+        function navigate(viewName) {
+            App.state.currentView = viewName;
+            
+            document.querySelectorAll('#app-container .view').forEach(view => {
+                view.classList.remove('active');
+            });
+            
+            const targetView = document.getElementById('view-' + viewName);
+            if (targetView) {
+                targetView.classList.add('active');
+            }
+            
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.view === viewName) {
+                    item.classList.add('active');
+                }
+            });
+            
+            window.scrollTo(0, 0);
+        }
+
+        // ============================================
+        // More Menu
+        // ============================================
+        function toggleMoreMenu() {
+            const overlay = document.getElementById('more-menu-overlay');
+            overlay.classList.toggle('active');
+            
+            if (overlay.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        // ============================================
+        // Community Tabs
+        // ============================================
+        function switchCommunityTab(btn, tabName) {
+            document.querySelectorAll('#view-community .tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            btn.classList.add('active');
+            
+            document.getElementById('community-requests').style.display = tabName === 'requests' ? 'block' : 'none';
+            document.getElementById('community-offers').style.display = tabName === 'offers' ? 'block' : 'none';
+            document.getElementById('community-my').style.display = tabName === 'my' ? 'block' : 'none';
+        }
+
+        // ============================================
+        // News Filter
+        // ============================================
+        function filterNews(btn, category) {
+            document.querySelectorAll('.filter-pill').forEach(pill => {
+                pill.classList.remove('active');
+            });
+            btn.classList.add('active');
+            // Filter logic would go here
+        }
+
+        // ============================================
+        // Calendar
+        // ============================================
+        function changeMonth(delta) {
+            // Calendar navigation logic would go here
+            showConfirmation(delta > 0 ? '翌月に移動' : '前月に移動');
+        }
+
+        // ============================================
+        // Modals
+        // ============================================
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // ============================================
+        // Confirmation Toast
+        // ============================================
+        function showConfirmation(message) {
+            const toast = document.getElementById('confirmation-toast');
+            document.getElementById('confirmation-message').textContent = message;
+            
+            toast.style.transform = 'translateY(0)';
+            toast.style.opacity = '1';
+            
+            setTimeout(() => {
+                toast.style.transform = 'translateY(-100%)';
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+
+        // ============================================
+        // Notifications
+        // ============================================
+        function showNotifications() {
+            showConfirmation('通知機能は開発中です');
+        }
+    </script>
 </body>
 </html>
